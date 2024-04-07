@@ -1,5 +1,14 @@
 # Advanced Topics
 
+## TODO
+
+1. split into different scripts (auth, downloading, main)? **MAYBE NOT**
+2. download video info
+   
+
+## Phase 1
+> Downloading data from TikTok
+
 
 
 ## Problemi
