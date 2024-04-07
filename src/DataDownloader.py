@@ -23,7 +23,8 @@ def writeLog(message, level):
 TikTok_URLs={
     'auth':'https://open.tiktokapis.com/v2/oauth/token/',
     'user': 'https://open.tiktokapis.com/v2/research/user/info/?fields=display_name,bio_description,avatar_url,is_verified,follower_count,following_count,likes_count,video_count',
-    'comments' : 'https://open.tiktokapis.com/v2/research/video/comment/list/?fields=id,video_id,text,like_count,reply_count,parent_comment_id,create_time'
+    'comments' : 'https://open.tiktokapis.com/v2/research/video/comment/list/?fields=id,video_id,text,like_count,reply_count,parent_comment_id,create_time',
+    'videos': 'https://open.tiktokapis.com/v2/research/video/query/?fields=id,video_description,create_time,region_code,share_count,view_count,like_count,comment_count, music_id,hashtag_names,username,effect_ids,playlist_id,voice_to_text' 
 }
 
 
@@ -57,7 +58,6 @@ def doAuthentication():
     }, data=params)
     # check the response and 
     if(res.status_code==200):
-        print('Ok auth: ')
         writeLog('Auth ok: '+str(res.json()),'AUTH')
         return res.json()
     else:
@@ -69,18 +69,18 @@ def doAuthentication():
 # @return {string} the Bearer token
 def getAuthToken():
     #there's a token and when we had requested - datetime.now() is inferior than the expiration time
-    if(TikTok_AuthToken["access_token"]!=None and abs((TikTok_AuthToken["Requested"]-datetime.now()).total_seconds())<TikTok_AuthToken["expires_in"]): 
+    if(TikTok_AuthToken['access_token']!=None and abs((TikTok_AuthToken['Requested']-datetime.now()).total_seconds())<TikTok_AuthToken['expires_in']): 
         #returns the last token if still valid
         return TikTok_AuthToken['access_token']
     else: # No Token or expired
         tmp = doAuthentication()
         if(tmp!=None):
-            TikTok_AuthToken["access_token"]= tmp["access_token"]
-            TikTok_AuthToken["expires_in"]= tmp["expires_in"]
-            TikTok_AuthToken["Requested"] = datetime.now() #mark the new timestamp (our request)
-            return TikTok_AuthToken["access_token"]
+            TikTok_AuthToken['access_token']= tmp['access_token']
+            TikTok_AuthToken['expires_in']= tmp['expires_in']
+            TikTok_AuthToken['Requested'] = datetime.now() #mark the new timestamp (our request)
+            return TikTok_AuthToken['access_token']
         else: #Empty token, waiting for 5min then retry (probably internet connection errors)
-            writeLog("Empty token, waiting for 5min","WARNING")
+            writeLog('Empty token, waiting for 5min','WARNING')
             time.sleep(5*60)
             getAuthToken()      
 
@@ -88,30 +88,38 @@ def getAuthToken():
 #______________________________________________________
 ## Downloading methods
 
-def downloadVideo(): ##TODO
-    res = requests.post('https://open.tiktokapis.com/v2/research/video/query/?fields=id,like_count',
+
+# Download the information of videos which are include into a research (query)
+# @query {Object/Dict} the query to filter videos
+# @start_date {string} in format UTC (eg: 20210123)
+# @end_date {string} must be no more than 30 days after the start_date
+# DOCS: https://developers.tiktok.com/doc/research-api-specs-query-videos/
+def downloadVideo(query, start_date, end_date, cursor): 
+    res = requests.post(TikTok_URLs['videos'],
     headers={
+        'Content-Type':'application/json',
         'Authorization':'Bearer ' + getAuthToken()
     },
     data=json.dumps({
-        'query': {
-            'and': [
-                { 'operation': 'IN', 'field_name': 'region_code', 'field_values': ['US', 'CA'] }
-            ]
-          }, 
-        'start_date': '20220615',
-        'end_date': '20220628',
-        'max_count': 10
+        'query': query, 
+        'start_date': start_date,
+        'end_date': end_date,
+        'max_count': 100,
+        'cursor': cursor,
+        #'is_random':'false' => if omitted is false
     })
     )
-    print(res)
-    print(res.json())
+    if(res.status_code==200):
+        return res.json()
+    else:
+        return None
+
 
 # Download the comments of a given video
 # @video_id {integer} the reference of the tiktok video
 # @return {dict/none}
 # DOCS: https://developers.tiktok.com/doc/research-api-specs-query-video-comments/
-def downloadComments(video_id):
+def downloadComments(video_id, cursor):
     res = requests.post(TikTok_URLs['comments'],
     headers={
         'Content-Type':'application/json',
@@ -120,7 +128,7 @@ def downloadComments(video_id):
     data=json.dumps({
         'video_id': video_id,
         'max_count': 100, #Default is 10, max is 100.
-        'cursor': 0 #Note: only the top 1000 comments will be returned, so cursor + max_count <= 1000.
+        'cursor': cursor #Note: only the top 1000 comments will be returned, so cursor + max_count <= 1000.
     })
     )
     if(res.status_code==200):
@@ -155,10 +163,25 @@ def storeData(data, type, filename):
     f = open('../data_downloaded/'+filename)
 
 
-def main():
-    print('Downloader started.')
+def exampleVideo():
+    myQuery={
+        'or':[
+             {
+                'operation': 'IN',
+                'field_name': 'region_code',
+                'field_values': ['US']
+            },
+            {
+                'operation':'EQ',
+                'field_name':'hashtag_name',
+                'field_values':['kendricklamar']
+            }
+        ]
+    }
+    x = downloadVideo(myQuery,'20240315','20240407',0)
+    print(x)
 
 
 
-# main()
+exampleVideo()
 
