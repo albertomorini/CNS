@@ -90,9 +90,8 @@ def getAuthToken():
 
 def downloadVideo(): ##TODO
     res = requests.post('https://open.tiktokapis.com/v2/research/video/query/?fields=id,like_count',
-    #    'Authorization':'Bearer '+ auth['access_token']
     headers={
-        'Authorization':'bearer clt.9x1Wq4QfCWF1SOVaGd5mvG1Pdv85LiK6obAecB5if2rixcIh7MprK20OqHBB'
+        'Authorization':'Bearer ' + getAuthToken()
     },
     data=json.dumps({
         'query': {
@@ -158,7 +157,7 @@ def storeData(data, type, filename):
 
 def main():
     print('Downloader started.')
-    
+
 
 
 # main()
