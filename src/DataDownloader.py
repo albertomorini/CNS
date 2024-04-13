@@ -16,6 +16,28 @@ def writeLog(message, level):
     log.close()
 
 
+# Store data into JSON file structured like {stored: Array} -> where the array is the data
+# @data {dict} the information retrieved
+# @filename {string} filename with extension
+# @pathDst {string} directory path where we ant to store/update the file [optional]
+def storeData(data, filename, pathDst='../data_downloaded/'):
+
+    try:  #check if the file exits
+        with open(pathDst+filename,'r') as f: # Load the ClientID/ClientSecret from private json
+            dummy = json.load(f)
+            f.close()
+    except Exception: #otherwise create the dummy variable
+        dummy = dict()
+        dummy['stored']= list()
+
+    dummy['stored'].append(data);
+
+    # write new data
+    ff = open(pathDst+filename,'w')
+    ff.write(json.dumps(dummy))
+    ff.close
+
+
 #______________________________________________________
 # TIKTOK INTEGRATION
 
@@ -157,52 +179,45 @@ def downloadUser(username):
 
 
 
+
+#______________________________________________________
+
+
 # MAIN
 
-# Store data into JSON file structured like {stored: Array} -> where the array is the data
-# @data {dict} the information retrieved
-# @filename {string} filename with extension
-# @pathDst {string} directory path where we ant to store/update the file [optional]
-def storeData(data, filename, pathDst='../data_downloaded/'):
-
-    try:  #check if the file exits
-        with open(pathDst+filename,'r') as f: # Load the ClientID/ClientSecret from private json
-            dummy = json.load(f)
-            f.close()
-    except ex: #otherwise create the dummy variable
-        dummy = dict()
-
-    dummy['stored'].append(data);
-
-    # write new data
-    ff = open(pathDst+filename,'w')
-    ff.write(json.dumps(dummy))
-    ff.close
 
 
-# def main(query, limit):
+def main(query, limitVideo, limitComment):
+    for counter_video in range (0, limitVideo,100): #download each video (incrementing the TikTok cursors by 100 each time - is the max)
+        resVideo = downloadVideo(query,'20240315','20240407',counter_video)
+        storeData(resVideo,'video.json') # store the videos retrieved
 
-def exampleVideo():
-    myQuery={
-        'and':[
-             {
-                'operation': 'IN',
-                'field_name': 'region_code',
-                'field_values': ['US']
-            },
+        for singleVideo in resVideo['data']['videos']: #for each video downloaded
+            try:
+            
+                print('processing video id: ' + str(singleVideo['id'])) 
+
+                for counter_comment in range(0,limitComment,100): # download the comment of the video
+                    resComments = downloadComments(singleVideo['id'],counter_comment)
+                    storeData(resComments,'comments.json') #store the comments retrieved
+            except Exception:
+                pass
+                
+
+
+myquery = {
+    'and':[
             {
-                'operation':'EQ',
-                'field_name':'hashtag_name',
-                'field_values':['TRUMP']
-            }
-        ]
-    }
-    x = downloadVideo(myQuery,'20240315','20240407',0)
-    print(x)
+            'operation': 'EQ',
+            'field_name': 'region_code',
+            'field_values': ['US']
+        },
+        {
+            'operation':'IN',
+            'field_name':'hashtag_name',
+            'field_values':['TRUMP','BIDEN','USELECTION','PRESIDENTIALELECTION','PRESIDENTIAL','MAGA','TRUMP2024','BIDEN2024']
+        }
+    ]
+}
 
-
-
-#exampleVideo()
-
-
-
+main(myquery,200,0)
