@@ -24,7 +24,7 @@ TikTok_URLs={
     'auth':'https://open.tiktokapis.com/v2/oauth/token/',
     'user': 'https://open.tiktokapis.com/v2/research/user/info/?fields=display_name,bio_description,avatar_url,is_verified,follower_count,following_count,likes_count,video_count',
     'comments' : 'https://open.tiktokapis.com/v2/research/video/comment/list/?fields=id,video_id,text,like_count,reply_count,parent_comment_id,create_time',
-    'videos': 'https://open.tiktokapis.com/v2/research/video/query/?fields=id,video_description,create_time,region_code,share_count,view_count,like_count,comment_count, music_id,hashtag_names,username,effect_ids,playlist_id,voice_to_text' 
+    'videos': 'https://open.tiktokapis.com/v2/research/video/query/?fields=id,video_description,create_time,region_code,share_count,view_count,like_count,comment_count,music_id,hashtag_names,username,effect_ids,playlist_id,voice_to_text' 
 }
 
 
@@ -159,13 +159,32 @@ def downloadUser(username):
 
 # MAIN
 
-def storeData(data, type, filename):
-    f = open('../data_downloaded/'+filename)
+# Store data into JSON file structured like {stored: Array} -> where the array is the data
+# @data {dict} the information retrieved
+# @filename {string} filename with extension
+# @pathDst {string} directory path where we ant to store/update the file [optional]
+def storeData(data, filename, pathDst='../data_downloaded/'):
 
+    try:  #check if the file exits
+        with open(pathDst+filename,'r') as f: # Load the ClientID/ClientSecret from private json
+            dummy = json.load(f)
+            f.close()
+    except ex: #otherwise create the dummy variable
+        dummy = dict()
+
+    dummy['stored'].append(data);
+
+    # write new data
+    ff = open(pathDst+filename,'w')
+    ff.write(json.dumps(dummy))
+    ff.close
+
+
+# def main(query, limit):
 
 def exampleVideo():
     myQuery={
-        'or':[
+        'and':[
              {
                 'operation': 'IN',
                 'field_name': 'region_code',
@@ -174,7 +193,7 @@ def exampleVideo():
             {
                 'operation':'EQ',
                 'field_name':'hashtag_name',
-                'field_values':['kendricklamar']
+                'field_values':['TRUMP']
             }
         ]
     }
@@ -183,5 +202,7 @@ def exampleVideo():
 
 
 
-exampleVideo()
+#exampleVideo()
+
+
 
