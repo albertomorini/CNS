@@ -134,6 +134,7 @@ def downloadVideo(query, start_date, end_date, cursor):
     if(res.status_code==200):
         return res.json()
     else:
+        writeLog('Error downloading USER comments code: '+str(res.status_code),'ERROR')
         return None
 
 
@@ -156,6 +157,7 @@ def downloadComments(video_id, cursor):
     if(res.status_code==200):
         return res.json()
     else:
+        writeLog('Error downloading USER comments code: '+str(res.status_code),'ERROR')
         return None
 
 # Download the public data (defined in the URL) of a user
@@ -175,6 +177,7 @@ def downloadUser(username):
     if(res.status_code==200):
         return res.json()
     else:
+        writeLog('Error downloading USER status code: '+str(res.status_code),'ERROR')
         return None
 
 
@@ -185,24 +188,23 @@ def downloadUser(username):
 
 # MAIN
 
-
-
 def main(query, limitVideo, limitComment):
     for counter_video in range (0, limitVideo,100): #download each video (incrementing the TikTok cursors by 100 each time - is the max)
         resVideo = downloadVideo(query,'20240315','20240407',counter_video)
         storeData(resVideo,'video.json') # store the videos retrieved
-
-        for singleVideo in resVideo['data']['videos']: #for each video downloaded
-            try:
-            
-                print('processing video id: ' + str(singleVideo['id'])) 
-
-                for counter_comment in range(0,limitComment,100): # download the comment of the video
-                    resComments = downloadComments(singleVideo['id'],counter_comment)
-                    storeData(resComments,'comments.json') #store the comments retrieved
-            except Exception:
-                pass
-                
+        if(resVideo is not None):
+            for singleVideo in resVideo['data']['videos']: #for each video downloaded
+                try:
+                    print('processing video id: ' + str(singleVideo['id'])) 
+                    for counter_comment in range(0,limitComment,100): # download the comment of the video
+                        resComments = downloadComments(singleVideo['id'],counter_comment)
+                        storeData(resComments,'comments.json') #store the comments retrieved
+                    #TODO: download also profile information?
+                except Exception as e:
+                    writeLog('Error downloading comments of video: '+str(singleVideo['id'])+' - err: '+str(e.message),'WARNING')
+                    pass
+        else:
+            writeLog('Video NoneType','ERROR') # just a warning, 
 
 
 myquery = {
@@ -220,4 +222,4 @@ myquery = {
     ]
 }
 
-main(myquery,200,0)
+main(myquery,200,1000) ##200 video and 1k of comment for each video
