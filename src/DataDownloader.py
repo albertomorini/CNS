@@ -46,7 +46,8 @@ TikTok_URLs={
     'auth':'https://open.tiktokapis.com/v2/oauth/token/',
     'user': 'https://open.tiktokapis.com/v2/research/user/info/?fields=display_name,bio_description,avatar_url,is_verified,follower_count,following_count,likes_count,video_count',
     'comments' : 'https://open.tiktokapis.com/v2/research/video/comment/list/?fields=id,video_id,text,like_count,reply_count,parent_comment_id,create_time',
-    'videos': 'https://open.tiktokapis.com/v2/research/video/query/?fields=id,video_description,create_time,region_code,share_count,view_count,like_count,comment_count,music_id,hashtag_names,username,effect_ids,playlist_id,voice_to_text' 
+    'videos': 'https://open.tiktokapis.com/v2/research/video/query/?fields=id,video_description,create_time,region_code,share_count,view_count,like_count,comment_count,music_id,hashtag_names,username,effect_ids,playlist_id,voice_to_text',
+    'repostedVideo': 'https://open.tiktokapis.com/v2/research/user/reposted_videos/?fields=id,create_time,username,region_code,video_description,music_id,like_count,comment_count,share_count,view_count,hashtag_names'
 }
 
 
@@ -181,7 +182,24 @@ def downloadUser(username):
         return None
 
 
-
+# DOCS: https://developers.tiktok.com/doc/research-api-specs-query-user-reposted-videos/
+def repostedVideo(username, cursor):
+    res = requests.post(TikTok_URLs['repostedVideo'],
+    headers={
+        'Authorization':'Bearer '+getAuthToken(),
+        'Content-Type': 'application/json'
+    },
+    data=json.dumps({
+        'username': video_id,
+        'max_count': 100, #Default is 10, max is 100.
+        'cursor': cursor #Note: only the top 1000 comments will be returned, so cursor + max_count <= 1000.
+    })
+    )
+    if(res.status_code==200):
+        return res.json()
+    else:
+        writeLog('Error downloading reposted video code: '+str(res.status_code),'ERROR')
+        return None
 
 #______________________________________________________
 

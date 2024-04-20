@@ -18,13 +18,10 @@
    2) Valutare la nazionalità del contenuto
     (*Ci sono commenti russi che danno favore a Trump*)
 
+**Link for right/left wing influencer**
 
-2) Guerra in Ucraina
-   1) commenti russi?
-
-3) Prendendo i profili più popular (charlie damelio, etc.) vedere se nei commenti c'è qualche profilo politico
-   1) Per capire anche lo SPAM
-   2) 
+- https://www.allsides.com/media-bias/ratings
+- https://mediabiasfactcheck.com/left/
 
 
 ## Dataset
