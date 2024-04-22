@@ -210,13 +210,15 @@ def main(query, limitVideo, limitComment):
     for counter_video in range (0, limitVideo,100): #download each video (incrementing the TikTok cursors by 100 each time - is the max)
         resVideo = downloadVideo(query,'20240315','20240407',counter_video)
         storeData(resVideo,'video.json') # store the videos retrieved
+        print('Downloaded video '+str(counter_video)+'/' + str(limitVideo))
         if(resVideo is not None):
             for singleVideo in resVideo['data']['videos']: #for each video downloaded
                 try:
-                    print('processing video id: ' + str(singleVideo['id'])) 
+                    writeLog('Processing video id: '+str(singleVideo['id']),'INFO')
                     for counter_comment in range(0,limitComment,100): # download the comment of the video
                         resComments = downloadComments(singleVideo['id'],counter_comment)
                         storeData(resComments,'comments.json') #store the comments retrieved
+                        print('\t Downloaded comment '+str(counter_comment)+"/"+str(limitComment))
                     #TODO: download also profile information?
                 except Exception as e:
                     writeLog('Error downloading comments of video: '+str(singleVideo['id'])+' - err: '+str(e.message),'WARNING')
