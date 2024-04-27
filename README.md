@@ -41,3 +41,15 @@
 - bidenhq (300k followers - verified but unofficial??)
 - democracycoalition (170k followers )
 
+## TESTING PHASE
+
+**RIGHT WING:** 'dailywire','mikepence50','notvictornieves','clarksonlawson','haley2024','donaldtrumppage'
+
+
+
+**LEFT WING**: 'aocinthehouse', 'washingtonpost', 'bidenhq','bernie', 'chrisdmowrey', 'harryjsisson'
+
+
+**NOT USED**:
+
+*Hashtag*: 'US','presidential','uspresidential','election','presidentialelection','us2024','2024', 'haley2024', 'trump2024','biden2024','republican', 'democrat','politics','usa','usapresidential','usa2024','MAGA'

@@ -3,3 +3,10 @@ src/credentials.json
 .DS_Store
 .DS_Store
 ADV.pdf
+.Rproj.user
+
+
+data_downloaded/
+CNS.Rproj
+Project slides Template.pdf
+.Rhistory
