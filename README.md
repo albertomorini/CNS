@@ -53,3 +53,10 @@
 **NOT USED**:
 
 *Hashtag*: 'US','presidential','uspresidential','election','presidentialelection','us2024','2024', 'haley2024', 'trump2024','biden2024','republican', 'democrat','politics','usa','usapresidential','usa2024','MAGA'
+
+
+## Analysis
+
+1. Un po' di engagement e panoramica likes per commenti e profili analizzati
+2. Correlazione tra video di SX e commenti di DX? e viceversa - da riformare
+3. ????
