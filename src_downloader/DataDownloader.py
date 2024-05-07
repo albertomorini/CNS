@@ -5,6 +5,7 @@ import requests
 import json 
 from datetime import datetime
 import time
+import calendar
 
 # UTILITY
 
@@ -37,6 +38,12 @@ def storeData(data, filename, pathDst='../data_downloaded/'):
     ff.write(json.dumps(dummy))
     ff.close
 
+
+def converterHumanTimeToUnix(year,month,day):
+    time_tuple = (year, month, day, 0, 0, 0, 0, 0, 0)
+    # convert time_tuple to seconds since epoch
+    seconds = time.mktime(time_tuple) #my timezone
+    return calendar.timegm(time_tuple) #GMT timezone
 
 #______________________________________________________
 # TIKTOK INTEGRATION
