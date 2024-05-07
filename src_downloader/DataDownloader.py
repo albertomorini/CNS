@@ -220,8 +220,8 @@ def getFollowers(username,cursor):
     },
     data=json.dumps({
         'username': username,
-        'max_count': 100, #Default is 10, max is 100.
-        'cursor': cursor #Note: only the top 1000 comments will be returned, so cursor + max_count <= 1000.
+        'max_count': 100, #Default is 20, max is 100.
+        'cursor': cursor #NOTE: unix timestamp of the day that we want to download (on 24th may user X,Y has started following $username -> return X,Y)
     })
     )
     if(res.status_code==200):
@@ -232,72 +232,52 @@ def getFollowers(username,cursor):
 
 
 
-print(getFollowers('huffpost','1704109794000'))
-
-
 #______________________________________________________
 
 
 # MAIN
 
-def main(query, limitVideo, limitComment, preambleFileName):
-    print('started for: '+preambleFileName)
-    for counter_video in range (0, limitVideo,100): #download each video (incrementing the TikTok cursors by 100 each time - is the max)
-        resVideo = downloadVideo(query,'20240301','20240330',counter_video)
-        storeData(resVideo,(preambleFileName+'video.json')) # store the videos retrieved
-        print('Downloaded video '+str(counter_video)+'/' + str(limitVideo))
-        if(resVideo is not None):
-            for singleVideo in resVideo['data']['videos']: #for each video downloaded
-                try:
-                    writeLog('Processing video id: '+str(singleVideo['id']),'INFO')
-                    for counter_comment in range(0,limitComment,100): # download the comment of the video
-                        resComments = downloadComments(singleVideo['id'],counter_comment)
-                        storeData(resComments,(preambleFileName+'comments.json')) #store the comments retrieved
-                        print('\t Downloaded comment '+str(counter_comment)+"/"+str(limitComment))
-                    #TODO: download also profile information?
-                except Exception as e:
-                    writeLog('Error downloading comments of video: '+str(singleVideo['id'])+' - err: '+str(e),'WARNING')
-                    pass
-        else:
-            writeLog('Video NoneType','ERROR') # just a warning, 
+# def main(query, limitVideo, limitComment, preambleFileName):
+#     print('started for: '+preambleFileName)
+#     for counter_video in range (0, limitVideo,100): #download each video (incrementing the TikTok cursors by 100 each time - is the max)
+#         resVideo = downloadVideo(query,'20240301','20240330',counter_video)
+#         storeData(resVideo,(preambleFileName+'video.json')) # store the videos retrieved
+#         print('Downloaded video '+str(counter_video)+'/' + str(limitVideo))
+#         if(resVideo is not None):
+#             for singleVideo in resVideo['data']['videos']: #for each video downloaded
+#                 try:
+#                     writeLog('Processing video id: '+str(singleVideo['id']),'INFO')
+#                     for counter_comment in range(0,limitComment,100): # download the comment of the video
+#                         resComments = downloadComments(singleVideo['id'],counter_comment)
+#                         storeData(resComments,(preambleFileName+'comments.json')) #store the comments retrieved
+#                         print('\t Downloaded comment '+str(counter_comment)+"/"+str(limitComment))
+#                     #TODO: download also profile information?
+#                 except Exception as e:
+#                     writeLog('Error downloading comments of video: '+str(singleVideo['id'])+' - err: '+str(e),'WARNING')
+#                     pass
+#         else:
+#             writeLog('Video NoneType','ERROR') # just a warning, 
 
 
 
+def main(influencerPools,year,month,day,nrDays):
+    #STORE the data retrieved in a structure like: {influencer+unixDate:followersPool}
+    storing = dict()
+    for influencer in influencerPools:
+        dummy = []
+        for ith_day in range(0,nrDays):
+            unixDate = converterHumanTimeToUnix(year,month,day+ith_day)
+            followersPool = getFollowers(influencer,unixDate)
+            dummy.append(followersPool)
 
-# queryLeftWing ={
-#     'and':[
-#             {
-#             'operation': 'EQ',
-#             'field_name': 'region_code',
-#             'field_values': ['US']
-#         },
-#         {
-#             'operation':'IN',
-#             'field_name':'username',
-#             'field_values':['aocinthehouse', 'washingtonpost', 'bidenhq','bernie', 'chrisdmowrey', 'harryjsisson']
-#         }
-#     ]
-# }
-
-# queryRightWing={
-#     'and':[
-#             {
-#             'operation': 'EQ',
-#             'field_name': 'region_code',
-#             'field_values': ['US']
-#         },
-#         {
-#             'operation':'IN',
-#             'field_name':'username',
-#             'field_values':['dailywire','mikepence50','notvictornieves','clarksonlawson','haley2024','donaldtrumppage']
-#         }
-#     ]
-# }
+            #TODO: here the point where we can hook up for the followers of followers (Marco's idea)
+            '''
+            for follower in followersPool:
+            getFollowers(follower)
+            '''
+        storing[influencer]=dummy
+    
+    storeData(storing, str(year)+"_"+str(month)+"_"+str(day)+"x"+str(nrDays)+'.json')
 
 
-## TODO: watchout - require a better parametrization - just for test
-
-# main(myquery,200,1000) ##200 video and 1k of comment for each video
-# main(queryLeftWing,1000,100,'LEFT_') #1000 video * 10'000 comment (~100each)
-
-# main(queryRightWing,1000,100,'RIGHT_') #1000 video * 10'000 comment (~100each)
+main(['huffpost','dailymail'],2024,2,1,9)
