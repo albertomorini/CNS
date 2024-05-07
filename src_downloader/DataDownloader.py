@@ -47,7 +47,10 @@ TikTok_URLs={
     'user': 'https://open.tiktokapis.com/v2/research/user/info/?fields=display_name,bio_description,avatar_url,is_verified,follower_count,following_count,likes_count,video_count',
     'comments' : 'https://open.tiktokapis.com/v2/research/video/comment/list/?fields=id,video_id,text,like_count,reply_count,parent_comment_id,create_time',
     'videos': 'https://open.tiktokapis.com/v2/research/video/query/?fields=id,video_description,create_time,region_code,share_count,view_count,like_count,comment_count,music_id,hashtag_names,username,effect_ids,playlist_id,voice_to_text',
-    'repostedVideo': 'https://open.tiktokapis.com/v2/research/user/reposted_videos/?fields=id,create_time,username,region_code,video_description,music_id,like_count,comment_count,share_count,view_count,hashtag_names'
+    'repostedVideo': 'https://open.tiktokapis.com/v2/research/user/reposted_videos/?fields=id,create_time,username,region_code,video_description,music_id,like_count,comment_count,share_count,view_count,hashtag_names',
+    'followers': 'https://open.tiktokapis.com/v2/research/user/followers/',
+    'following': 'https://open.tiktokapis.com/v2/research/user/following/',
+    'likedVideos': 'https://open.tiktokapis.com/v2/research/user/liked_videos/'
 }
 
 
@@ -190,7 +193,7 @@ def repostedVideo(username, cursor):
         'Content-Type': 'application/json'
     },
     data=json.dumps({
-        'username': video_id,
+        'username': username,
         'max_count': 100, #Default is 10, max is 100.
         'cursor': cursor #Note: only the top 1000 comments will be returned, so cursor + max_count <= 1000.
     })
@@ -200,6 +203,30 @@ def repostedVideo(username, cursor):
     else:
         writeLog('Error downloading reposted video code: '+str(res.status_code),'ERROR')
         return None
+
+
+def getFollowers(username,cursor):
+    res = requests.post(TikTok_URLs['followers'],
+    headers={
+        'Authorization':'Bearer '+getAuthToken(),
+        'Content-Type': 'application/json'
+    },
+    data=json.dumps({
+        'username': username,
+        'max_count': 100, #Default is 10, max is 100.
+        'cursor': cursor #Note: only the top 1000 comments will be returned, so cursor + max_count <= 1000.
+    })
+    )
+    if(res.status_code==200):
+        return res.json()
+    else:
+        writeLog('Error downloading followers, code: '+str(res.status_code),'ERROR')
+        return None
+
+
+
+print(getFollowers('huffpost','1704109794000'))
+
 
 #______________________________________________________
 
@@ -230,40 +257,40 @@ def main(query, limitVideo, limitComment, preambleFileName):
 
 
 
-queryLeftWing ={
-    'and':[
-            {
-            'operation': 'EQ',
-            'field_name': 'region_code',
-            'field_values': ['US']
-        },
-        {
-            'operation':'IN',
-            'field_name':'username',
-            'field_values':['aocinthehouse', 'washingtonpost', 'bidenhq','bernie', 'chrisdmowrey', 'harryjsisson']
-        }
-    ]
-}
+# queryLeftWing ={
+#     'and':[
+#             {
+#             'operation': 'EQ',
+#             'field_name': 'region_code',
+#             'field_values': ['US']
+#         },
+#         {
+#             'operation':'IN',
+#             'field_name':'username',
+#             'field_values':['aocinthehouse', 'washingtonpost', 'bidenhq','bernie', 'chrisdmowrey', 'harryjsisson']
+#         }
+#     ]
+# }
 
-queryRightWing={
-    'and':[
-            {
-            'operation': 'EQ',
-            'field_name': 'region_code',
-            'field_values': ['US']
-        },
-        {
-            'operation':'IN',
-            'field_name':'username',
-            'field_values':['dailywire','mikepence50','notvictornieves','clarksonlawson','haley2024','donaldtrumppage']
-        }
-    ]
-}
+# queryRightWing={
+#     'and':[
+#             {
+#             'operation': 'EQ',
+#             'field_name': 'region_code',
+#             'field_values': ['US']
+#         },
+#         {
+#             'operation':'IN',
+#             'field_name':'username',
+#             'field_values':['dailywire','mikepence50','notvictornieves','clarksonlawson','haley2024','donaldtrumppage']
+#         }
+#     ]
+# }
 
 
 ## TODO: watchout - require a better parametrization - just for test
 
 # main(myquery,200,1000) ##200 video and 1k of comment for each video
-main(queryLeftWing,1000,100,'LEFT_') #1000 video * 10'000 comment (~100each)
+# main(queryLeftWing,1000,100,'LEFT_') #1000 video * 10'000 comment (~100each)
 
 # main(queryRightWing,1000,100,'RIGHT_') #1000 video * 10'000 comment (~100each)
