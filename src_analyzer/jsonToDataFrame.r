@@ -2,9 +2,9 @@ library(jsonlite)
 
 
 
-RIGHT_Video1 <- fromJSON("src_analyzer/mockUp.json")
+mockUpJson <- fromJSON("src_analyzer/mockUp.json")
 
-sample_data <- RIGHT_Video1
+sample_data <- mockUpJson
 output_dataframe <- as.data.frame(sample_data)
 
 print(output_dataframe)
