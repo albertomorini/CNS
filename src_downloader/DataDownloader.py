@@ -264,11 +264,11 @@ def main(influencerPools,year,month,day,nrDays):
     #STORE the data retrieved in a structure like: {influencer+unixDate:followersPool}
     storing = dict()
     for influencer in influencerPools:
-        dummy = []
+        dummy = dict()
         for ith_day in range(0,nrDays):
             unixDate = converterHumanTimeToUnix(year,month,day+ith_day)
             followersPool = getFollowers(influencer,unixDate)
-            dummy.append(followersPool)
+            dummy[str(year)+"/"+str(month)+"/"+str(day+ith_day)]=followersPool
 
             #TODO: here the point where we can hook up for the followers of followers (Marco's idea)
             '''
@@ -280,4 +280,4 @@ def main(influencerPools,year,month,day,nrDays):
     storeData(storing, str(year)+"_"+str(month)+"_"+str(day)+"x"+str(nrDays)+'.json')
 
 
-main(['huffpost','dailymail','aocinthehouse','cnn','studentsforlife','alynicolee1126'],2024,2,1,15)
+main(['huffpost','dailymail','aocinthehouse','cnn','studentsforlife','alynicolee1126'],2024,2,1,30)

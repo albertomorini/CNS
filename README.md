@@ -57,18 +57,10 @@
 
 ## Analysis
 
-### Studio 1: (panoramica)
-- engagement (numero like nei commenti, numero di like ai video)
-- statistiche sui profili che ho scaricato
+- **statistiche generiche** 
+- **eco-chamber**: quindi scaricando i followers degli influencer
+- **? idea: correlazione con il following dei followers** - idea di marco
 
 
-### Studio 2: (studio di settore)
-- correlazione tra settore e tematiche (eg. partiti di destra e no-vax) 
-- analisi di interazione tra le due ale politiche (eg. se i profili di dx hanno commmenti più pro o più contro)
-- in che lingua commentano 
-- emoji
-- etc.
-
-#### Studio 3: (profilazione a un account specifico eg. biden/trump)
 
 
