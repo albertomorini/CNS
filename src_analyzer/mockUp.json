@@ -1,0 +1,17 @@
+[
+    {
+      "name": "Sowham",
+      "age": 20,
+      "city": "Kolkata"
+    },
+    {
+      "name": "Kushal",
+      "age": 19,
+      "city": "Jalpaiguri"
+    },
+    {
+      "name": "Rohan",
+      "age": 21,
+      "city": "Durgapur"
+    }
+  ]
