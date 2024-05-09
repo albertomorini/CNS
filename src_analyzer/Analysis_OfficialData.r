@@ -1,21 +1,29 @@
 library(jsonlite)
+library(dplyr)
+library(tidyverse)
 library(tibble)
+json_data <- fromJSON(paste(readLines("data_downloaded/2024_2_1x30.json")))
 
-json_source <- fromJSON(paste(readLines("data_downloaded/2024_2_1x30.json")))
+influencer_names <- names(json_data$stored)  
+dates <- names(json_data$stored[[influencer_names[1]]])  
 
-influencers_names<-strsplit(names(json_source$stored),"[[:space:]]")  ## lista con soli i nomi degli influencer
-days_list<- strsplit(names(json_source$stored[[1]]),"[[:space:]]") ## lista con tutte le date (del primo utente, ma sono uguali per ognuno)
+InfXDate <- crossing(influencer_names,dates) ## Cartesian product between InfluencersName and date
 
-df <- data.frame(a=influencers_names,b=days_list) # DO NOT WORK
+total <- tibble()
+# TODO: optimize using the cartesian product
+for(nome in influencer_names){
+  for(d in dates){
+    dummy <- tibble(
+      n = nome,
+      da = d,
+      val = paste(json_data$stored[[nome]][[d]]$data$user_followers)
+    )
+    total<- rbind(total,dummy)
+  }
+}
 
-
-# for(name in influencers_names){
-#   for (d in days_list){
-#     df <- data.frame(
-#       nome = c(name),
-#       data = json_source$stored[[name]][[d]]$data$user_followers
-#     )
-#     
-#   }
-# }
-
+# FIX: plotting simple stats 
+total %>%
+  group_by(da,n) %>%
+  summarise ( totali = len(val)) %>%
+  
