@@ -1,0 +1,9 @@
+{"stored": [{
+    "influencer_i":{
+        "date_i":{"data":{"user_followers":[
+            {"username1"},
+            {"username2"},
+            {"username_n"},
+        ]}}
+    }
+}]}
