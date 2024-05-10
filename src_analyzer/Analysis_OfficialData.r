@@ -14,16 +14,18 @@ total <- tibble()
 for(nome in influencer_names){
   for(d in dates){
     dummy <- tibble(
-      n = nome,
-      da = d,
-      val = paste(json_data$stored[[nome]][[d]]$data$user_followers)
+      influencer = nome,
+      day = d,
+      followers = as.vector(json_data$stored[[nome]][[d]]$data$user_followers,mode='list')
     )
     total<- rbind(total,dummy)
+    print(length(as.vector(json_data$stored[[nome]][[d]]$data$user_followers[[1]]$username,mode='list'))) ##works
   }
 }
 
+
 # FIX: plotting simple stats 
-total %>%
-  group_by(da,n) %>%
-  summarise ( totali = len(val)) %>%
+# total %>%
+#   group_by(da,n) %>%
+#   summarise ( totali = len(val)) %>%
   
