@@ -44,19 +44,34 @@ for(nome in influencer_names){
 # dc<-total %>%
 #   group_by(influencer,day,length(followers[[1]]$username))
 
-total %>%
-  select(influencer, day, length(followers[[1]]$username))
+
+ff = function(influencer,day,followers){
+    tmp <- total %>%
+    as_tibble %>%
+    rowwise() %>%
+    mutate (tt = length(followers$username)) %>%
+    sort_by(day) %>%
+    select(influencer,day,tt)
+    # TODO: remove duplicated followers 
+    # select(influencer, day,length(tt))
+  
+
+    # 
+    ggplot(tmp, aes(x = day, y = tt, group=influencer, colour=influencer))+
+      geom_line(size=1.2)+
+      scale_color_manual(values=c("black", "#d8ce15"))+
+      labs(x = "Days",
+           y = "Amount of followers",
+           colour = "Influencers")+
+      theme_minimal()+
+      theme(
+        axis.text.x = element_text(angle=70)
+      )+
+      ggtitle("Number of followers", "TODO: inserire il mese")
+   
+}
+
+ff(total$influencer, total$day, total$followers)
 
   # select(influencer,day, )
 
-# ggplot(total, aes(x = day, y = length(followers[[1]]$username), group=influencer, colour=influencer))+
-#   geom_line(size=1.2)+
-#   scale_color_manual(values=c("black", "#d8ce15"))+
-#   labs(x = "Days",
-#        y = "Amount of followers",
-#        colour = "Influencers")+
-#   theme_minimal()+
-#   theme(
-#     axis.text.x = element_text(angle=70)
-#   )+
-#   ggtitle("Anni & Etnie", "Le vittime divise per etnia negli anni")
