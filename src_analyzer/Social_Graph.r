@@ -10,41 +10,32 @@ json_data <- fromJSON(paste(readLines("msc/influencersFollowersMorckUp.json")))
 
 
 
-influencer_names <- names(json_data$stored)  
-dates <- names(json_data$stored[[influencer_names[1]]])  
-
-InfXDate <- crossing(influencer_names,dates) ## Cartesian product between InfluencersName and date
+influencer_names <- names(json_data$stored)
+dates <- names(json_data$stored[[influencer_names[1]]])
 
 total <- tibble()
-# TODO: optimize using the cartesian product
-for(name in influencer_names){
-  for(d in dates){
+for (name in influencer_names){
+  for (d in dates){
     dummy <- tibble(
       influencer = name,
       day = d,
       followers = sapply(json_data$stored[[influencer]][[day]]$data$user_followers, function(x) x$username) # vector of usernames as strings ("user1", ..., "user n")
     )
-    total<- rbind(total,dummy)
-
-    #print(length(as.vector(json_data$stored[[nome]][[d]]$data$user_followers[[1]]$username,mode='list'))) ##works
+    total <- rbind(total, dummy)
   }
 }
 
-#View(total)
-# total now is a table influencer X day X follower 
-
-
 # create SAN
 nodes <- data.frame(total$influencer, total$followers)
-View(nodes)
+# View(nodes)
 
-library(igraph)
-my_san <- graph_from_data_frame(nodes, directed = TRUE)
-View(my_san)
-
+library(igraph) # load here and then detach otherwise error with $ and vectors
+my_san <- graph_from_data_frame(nodes, directed = FALSE)
+# View(my_san)
 
 # add lables
 V(my_san)$label <- V(my_san)$name
 
-plot(my_san)
+# TODO format graphical aspectsof plotted san
+plot(my_san) # successfully plotted social graph
 detach(package:igraph)
