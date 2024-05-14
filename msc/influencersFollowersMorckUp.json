@@ -47,6 +47,41 @@
                     }
                 }
             
+            },
+            "aoc": {
+                "2024/2/2": {
+                                        "data": {
+                        "cursor": 1706799832,
+                        "has_more": true,
+                        "user_followers": [
+                            {
+                                "display_name": "Sharon Fralick960",
+                                "username": "giulio"
+                            },
+                            {
+                                "username": "giovanni",
+                                "display_name": "Walsh_ie"
+                            },
+                            {
+                                "display_name": "Phoenix312",
+                                "username": "francesca"
+                            },
+                            {
+                                "display_name": "Cory LaPeen",
+                                "username": "corylapeen"
+                            },
+                            {
+                                "display_name": "user3023148095975",
+                                "username": "joe camel"
+                            }
+                        ]
+                    },
+                    "error": {
+                        "code": "ok",
+                        "message": "ok",
+                        "log_id": "202405082059464BE439AD0419A4010015"
+                    }
+                }
             }
         }
 ]
