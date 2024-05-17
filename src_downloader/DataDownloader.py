@@ -211,7 +211,7 @@ def repostedVideo(username, cursor):
         writeLog('Error downloading reposted video code: '+str(res.status_code),'ERROR')
         return None
 
-
+# DOCS: https://developers.tiktok.com/doc/research-api-specs-query-user-followers/
 def getFollowers(username,cursor):
     res = requests.post(TikTok_URLs['followers'],
     headers={
@@ -266,10 +266,10 @@ def main(influencerPools,year,month,day,nrDays):
     for influencer in influencerPools:
         dummy = dict()
         for ith_day in range(0,nrDays):
-            unixDate = converterHumanTimeToUnix(year,month,day+ith_day)
+            unixDate = converterHumanTimeToUnix(year,month,day)-(86400*ith_day) ##to reverse from 30 may - 0h | 30 may - 24h | 30 may - 48h
             followersPool = getFollowers(influencer,unixDate)
             dummy[str(year)+"/"+str(month)+"/"+str(day+ith_day)]=followersPool
-
+            time.sleep(2) ## wait just two sec before download another set
             #TODO: here the point where we can hook up for the followers of followers (Marco's idea)
             '''
             for follower in followersPool:
@@ -280,4 +280,4 @@ def main(influencerPools,year,month,day,nrDays):
     storeData(storing, str(year)+"_"+str(month)+"_"+str(day)+"x"+str(nrDays)+'.json')
 
 
-main(['huffpost','dailymail','aocinthehouse','cnn','studentsforlife','alynicolee1126'],2024,2,1,30)
+main(['huffpost','dailymail','aocinthehouse','cnn','studentsforlife','alynicolee1126'],2024,5,17,60)

@@ -6,9 +6,14 @@ library(ggplot2)
 json_data <- fromJSON(paste(readLines("data_downloaded/2024_2_1x30.json")))
 
 influencer_names <- names(json_data$stored)  
-dates <- names(json_data$stored[[influencer_names[1]]])  
+dates <- names(json_data$stored[[influencer_names[1]]])   
 
 InfXDate <- crossing(influencer_names,dates) ## Cartesian product between InfluencersName and date
+
+
+
+
+
 
 total <- tibble()
 # TODO: optimize using the cartesian product
@@ -17,32 +22,12 @@ for(nome in influencer_names){
     dummy <- tibble(
       influencer = nome,
       day = d,
-      followers = as.vector(json_data$stored[[nome]][[d]]$data$user_followers,mode='list')
+      followers = as.vector(json_data$stored[[nome]][[d]]$data$user_followers,mode='list') ##TODO: keep just the username
     )
     total<- rbind(total,dummy)
-
     #print(length(as.vector(json_data$stored[[nome]][[d]]$data$user_followers[[1]]$username,mode='list'))) ##works
   }
 }
-
-# total %>%
-#   filter(length(followers)>50) %>%
-#   select(influencer, day) 
-
-
-# ggplot() + 
-#   geom_point(data=total,aes(x = day, y = influencer, fill = length(followers)),
-#              pch=21, size=9, colour=NA) +
-#   geom_polygon(data = total, 
-#                mapping=aes(x=day, 
-#                            y=influencer, 
-#                            colour = "red"),
-#                alpha=0) 
-
-
-  
-# dc<-total %>%
-#   group_by(influencer,day,length(followers[[1]]$username))
 
 
 ff = function(influencer,day,followers){
@@ -75,3 +60,13 @@ ff(total$influencer, total$day, total$followers)
 
   # select(influencer,day, )
 
+
+
+
+
+marco<-total %>%
+  as_tibble %>%
+  rowwise() %>%
+  summarise(u= influencer) %>%
+  mutate (a = list(followers$username)) %>%
+  select(u,a)
