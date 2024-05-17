@@ -1,0 +1,15 @@
+{
+    "macros": {
+        "markdown_code_block": [
+            {
+                "command": "type",
+                "args": {
+                    "text": "``````"
+                }
+            },
+            "cursorLeft",
+            "cursorLeft",
+            "cursorLeft"
+        ],
+}
+}
