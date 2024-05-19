@@ -3,7 +3,7 @@
 University of Padua's Advance Topics for Cybersecurity course's project.
 Made by 
 - Alberto Morini ([albertomorini](https://github.com/albertomorini)) 
-- Marco Bellò ([mhetacc](https://github.com/albertomorini))
+- Marco Bellò ([mhetacc](https://github.com/mhetacc))
 
 ## Project Goals
 
