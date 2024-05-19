@@ -17,7 +17,8 @@ total <- InfXDate %>%
   mutate (followers = list(json_data$stored[[influencer_names]][[dates]]$data$user_followers[[1]]$username)) %>%
   select (influencer = influencer_names, day = dates,followers)
 
-
+##TODO: remove the duplicate? HOW?
+## foreach in array searching the previous array to remove it?
 
 # # 
 # ggplot(total, aes(x = day, y = length(followers), group=influencer, colour=influencer))+
