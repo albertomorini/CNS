@@ -4,30 +4,26 @@ library(tidyverse)
 library(tibble)
 library(ggplot2)
 
-json_data <- fromJSON(paste(readLines("data_downloaded/2024_2_1x30.json")))
-#json_data <- fromJSON(paste(readLines("msc/influencersFollowersMorckUp.json")))
+json_data <- fromJSON(paste(readLines("data_downloaded/2024_5_17x40.json")))
 
+influencer_names <- names(json_data$stored)  
+dates <- names(json_data$stored[[influencer_names[1]]])   
+InfXDate <- as_tibble(crossing(influencer_names,dates)) ## Cartesian product between InfluencersName and date
 
-influencer_names <- names(json_data$stored)
-dates <- names(json_data$stored[[influencer_names[1]]])
-
-
-total <- tibble()
-for (name in influencer_names){
-  for (d in dates){
-    dummy <- tibble(
-      influencer = name,
-      day = d,
-      followers = sapply(json_data$stored[[influencer]][[day]]$data$user_followers, function(x) x$username) # vector of usernames as strings ("user1", ..., "user n")
-    )
-    total <- rbind(total, dummy)
-  }
-}
+## for cartesian correlation (Influencer : day) we put the list of the nickname of that day
+total <- InfXDate %>%
+  as_tibble %>%
+  rowwise() %>%
+  mutate (followers = list(json_data$stored[[influencer_names]][[dates]]$data$user_followers[[1]]$username)) %>%
+  select (influencer = influencer_names, day = dates,followers)
 
 
 # create SAN nodes without duplicated followers
 # modified so it takes only huffpost <------------------------------------------!!
-nodes <- unique(data.frame(total$influencer["huffpost"], total$followers))   # doesnt color if ["name"]
+
+##IMPORTANT: doesn't work, makes a unique in the list but not across the rows
+nodes <- unique(data.frame(total$influencer["huffpost"], total$followers))   # doesnt color if ["name"] 
+
 
 library(igraph) # load here and then detach otherwise error with $ and vectors
 
