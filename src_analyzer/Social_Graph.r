@@ -20,9 +20,19 @@ total <- InfXDate %>%
 
 # create SAN nodes without duplicated followers
 # modified so it takes only huffpost <------------------------------------------!!
+View(total)
+
+total_transformed <- total %>% 
+  unnest(cols = followers) %>%
+  select(influencer, followers) %>%
+  rename(influencer=influencer, follower = followers)
+
+
+View(total_transformed)
+
 
 ##IMPORTANT: doesn't work, makes a unique in the list but not across the rows
-nodes <- unique(data.frame(total$influencer["huffpost"], total$followers))   # doesnt color if ["name"] 
+nodes <- data.frame(total_transformed$influencer, total_transformed$follower)   # doesnt color if ["name"] 
 
 
 library(igraph) # load here and then detach otherwise error with $ and vectors
