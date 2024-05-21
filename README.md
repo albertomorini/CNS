@@ -51,7 +51,24 @@
 4. Engagement
    1. Also of comments (sentiment analysis etc)
 
+**Meeting 21/04/2024:**
+- On followers:
+   - smaller time stamps to increase granularity
+   - pick user with low followers and see how data are returned
+      - see growth rate (+-)
+      - suppose it applies to big influencers 
+   - *cumulata* on number of followers 
+      - observe APIs response on curve changes
+   - understand what *has_more* means
+- On social graph:
+   - for each influencer do *cosine similarity*
+   - for each user following do *ideology* score (polarization score)
+- User engagement
+- Sentiment analysis on comments
+   - Chat GPT (or other LMs)
+   - Bert
+- User followers + ideology = see increment or decrement of polarization
 
 
 ## Phase 3
-> Report + Powerpoint
+> Report + Powerpointcomunqu
