@@ -3,7 +3,7 @@ library(dplyr)
 library(tidyverse)
 library(tibble)
 library(ggplot2)
-json_data <- fromJSON(paste(readLines("data_downloaded/2024_5_17x40.json")))
+json_data <- fromJSON(paste(readLines("data_downloaded/merged.json")))
 
 influencer_names <- names(json_data$stored)  
 dates <- names(json_data$stored[[influencer_names[1]]])   

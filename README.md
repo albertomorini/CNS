@@ -3,19 +3,6 @@
 ## Phase 1
 > Downloading data from TikTok
 
-
-## Goals
-
-1) Elezioni americane (Biden vs Trump)
-   1) E' possibile valutare se un contenuto sia di dx o sx
-   2) Valutare la nazionalità del contenuto
-    (*Ci sono commenti russi che danno favore a Trump*)
-
-**Link for right/left wing influencer**
-
-- https://www.allsides.com/media-bias/ratings
-- https://mediabiasfactcheck.com/left/
-
 ### Influencer list
 
 
@@ -41,26 +28,30 @@
 - bidenhq (300k followers - verified but unofficial??)
 - democracycoalition (170k followers )
 
-## TESTING PHASE
+### TESTING PHASE
 
 **RIGHT WING:** 'dailywire','mikepence50','notvictornieves','clarksonlawson','haley2024','donaldtrumppage'
 
-
-
 **LEFT WING**: 'aocinthehouse', 'washingtonpost', 'bidenhq','bernie', 'chrisdmowrey', 'harryjsisson'
-
 
 **NOT USED**:
 
 *Hashtag*: 'US','presidential','uspresidential','election','presidentialelection','us2024','2024', 'haley2024', 'trump2024','biden2024','republican', 'democrat','politics','usa','usapresidential','usa2024','MAGA'
 
 
-## Analysis
+## Phase 2
+> Data analysis in R
 
-- **statistiche generiche** 
-- **eco-chamber**: quindi scaricando i followers degli influencer
-- **? idea: correlazione con il following dei followers** - idea di marco
+### TODO
+
+1. Eco chamber graph and data
+2. Cosine similarity
+3. Followers flow (small granuality)
+   1. Also with a good span between time (from different month)
+4. Engagement
+   1. Also of comments (sentiment analysis etc)
 
 
 
-
+## Phase 3
+> Report + Powerpoint

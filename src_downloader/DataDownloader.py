@@ -288,4 +288,4 @@ def main(influencerPools,year,month,day,nrDays):
     storeData(storing, str(year)+"_"+str(month)+"_"+str(day)+"x"+str(nrDays)+'.json')
 
 
-main(['aocinthehouse','huffpost','dailymail','cnn','alynicolee1126'],2024,5,17,40)
+main(['aocinthehouse','huffpost','dailymail','cnn','alynicolee1126'],2023,10,20,90)
