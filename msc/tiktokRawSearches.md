@@ -25,19 +25,19 @@ https://en.wikipedia.org/wiki/2024_Republican_Party_presidential_primaries
 - ofc Donald Trump (not on tt?)
 
 
-https://www.foxnews.com/politics/conservative-tiktok-influencers-platform-discriminates-against-right-leaning-voices
-^ right wing monsters:
+https://www.foxnews.com/politics/conservative-tiktok-influencers-platform-discriminates-against-right-leaning-voices \
+right wing:
  - Victor Nieves
  - Morgonn McMichael
  - Clarkson Lawson
 
-^ left wing bois:
+left wing:
  - Harry J. Nisson
  - Under the Desk News
  - Chris Mowrey
 
-https://www.foxnews.com/media/tiktok-silenced-11-pro-free-speech-organizations-while-muzzling-conservatives-study-finds
-^ right wing:
+https://www.foxnews.com/media/tiktok-silenced-11-pro-free-speech-organizations-while-muzzling-conservatives-study-finds \
+right wing:
  - Lt. Col. Allen West
  - Judicial Watch President Tom Fitton
  - MRCTV
