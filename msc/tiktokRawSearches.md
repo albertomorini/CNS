@@ -134,6 +134,13 @@ aim to evaluate the similarity between two nodes in the context of the whole net
 Salton Index, Jaccard Index, and Sorensen Index always have good performance. Cosine similarity computational complexity is very high to be applied to very large data\
 
 https://www.researchgate.net/publication/222697773_Empirical_comparison_of_local_structural_similarity_indices_for_collaborative-filtering-based_recommender_systems \
-Cosine index has high computational cost, so local structure stuff has been made: When the data is dense, the structure-based indices can perform competitively good as Cosine index, while with lower computational complexity. Furthermore, when the data is sparse, the structure-based indices give even better results than Cosine index. 
-- Oss: *sparsity* is an index 
+Cosine index has high computational cost, so local structure stuff has been made: When the data is dense, the structure-based indices can perform competitively good as Cosine index, while with lower computational complexity. Furthermore, when the data is sparse, the structure-based indices give even better results than Cosine index. \
+[*Sparsity*](https://en.wikipedia.org/wiki/Sparse_network): *In network science, a sparse network has much fewer links than the possible maximum number of links within that network (the opposite is a dense network)* \
+**Oss:** our network is greatly sparse: most nodes are linked only with one influencer. 
+
+![sim indexes](similarity_indexes_comparison.png)
+
+Generally speaking, the diversity decreases with the increasing of N or L (we have low N)
+
+![comp indexes](computational_time_indexes.png)
 
