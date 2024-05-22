@@ -131,16 +131,156 @@ https://ceur-ws.org/Vol-1353/paper_14.pdf \
 set similarity provides the index of intersection of node parents (which are, of course among the neighbors) of the nodes being compared
 ### Global structure similarity
 aim to evaluate the similarity between two nodes in the context of the whole network \
-Salton Index, Jaccard Index, and Sorensen Index always have good performance. Cosine similarity computational complexity is very high to be applied to very large data\
+Salton Index, Jaccard Index, and Sorensen Index always have good performance. Cosine similarity computational complexity is very high to be applied to very large data
 
-https://www.researchgate.net/publication/222697773_Empirical_comparison_of_local_structural_similarity_indices_for_collaborative-filtering-based_recommender_systems \
+https://www.researchgate.net/publication/222697773_Empirical_comparison_of_local_structural_similarity_indices_for_collaborative-filtering-based_recommender_systems 
+
 Cosine index has high computational cost, so local structure stuff has been made: When the data is dense, the structure-based indices can perform competitively good as Cosine index, while with lower computational complexity. Furthermore, when the data is sparse, the structure-based indices give even better results than Cosine index. \
 [*Sparsity*](https://en.wikipedia.org/wiki/Sparse_network): *In network science, a sparse network has much fewer links than the possible maximum number of links within that network (the opposite is a dense network)* \
 **Oss:** our network is greatly sparse: most nodes are linked only with one influencer. 
 
 ![sim indexes](similarity_indexes_comparison.png)
 
-Generally speaking, the diversity decreases with the increasing of N or L (we have low N)
+Generally speaking, the diversity decreases with the increasing of N or L (we have low N, L is recommendation film list)
 
 ![comp indexes](computational_time_indexes.png)
 
+Salton Index, Jaccard Index and Sørensen Index, always have good performances unless the available information is too few, which may be caused by either the extremely sparse training set (i.e., small q) or the very few number of nearest neighbors (i.e., small N) \
+
+#### Cosine similarity
+
+Idea: consider each influencer as a vector of words:
+```
+influencer = ["follower1", "follower2", "follower3", ... ,"followerN"]
+```
+
+**Using lexical vectors:** 
+
+https://www.researchgate.net/publication/359662169_Cosine_similarity-based_algorithm_for_social_networking_recommendation 
+
+This is between written documents
+```python
+# python
+# this gets accuracy rate of around 90% 
+
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+def pairwise_similarity (descriptions) :
+	documents = descriptions
+	print(descriptions)
+	tfidf = TfidfVectorizer().fit_transform(documents)
+	# Vectorizer returns normalized td-idf
+	pairwise_similarity = tfidf * tfidf.T
+	arr = pairwise_similarity.toarray()
+
+```
+
+https://stackoverflow.com/questions/57092479/finding-the-cosine-similarity-of-a-sentence-with-many-others-in-r
+
+*Stringdist* measure qgrams i.e. sequences of q character. \
+Might be a problem: *username=giovanni* and *username=giulio* may be considered related based on this definition.
+
+```r
+# R
+library(stringdist)
+
+s1 <- "The book is on the table"  
+s2 <- "The pen is on the table"  
+s3 <- "Put the pen on the book"  
+s4 <- "Take the book and pen"  
+
+sn <- "Take the book and pen from the table" 
+
+sv <- c(s1=s1, s2=s2, s3=s3, s4=s4, sn=sn)
+
+# Split sentences into words
+svs <- strsplit(tolower(sv), "\\s+")
+
+# Calculate term frequency tables (tf)
+termf <- table(stack(svs))
+
+# Calculate inverse document frequencies (idf)
+idf <- log(1/rowMeans(termf != 0))
+
+# Multiply to get tf-idf
+tfidf <- termf*idf
+
+# Calculate dot products between the last tf-idf and all the previous
+dp <- t(tfidf[,5]) %*% tfidf[,-5]
+
+# Divide by the product of the euclidean norms do get the cosine similarity
+cosim <- dp/(sqrt(colSums(tfidf[,-5]^2))*sqrt(sum(tfidf[,5]^2)))
+cosim
+#           [,1]      [,2]       [,3]      [,4]
+# [1,] 0.1215616 0.1215616 0.02694245 0.6198245
+```
+
+
+**Using numerical vectors:**
+
+https://www.r-bloggers.com/2021/08/how-to-calculate-cosine-similarity-in-r/
+
+```r
+# R
+library(lsa)
+
+# between vectors
+x <- c(33, 33, 43, 55, 48, 37, 43, 24)
+y <- c(37, 38, 42, 46, 46, 59, 41, 50)
+cosine(x, y)
+# output
+[1,] 0.9624844
+
+# using matrices (for similarity between multiple vectors)
+x <- c(23, 24, 34, 35, 22, 25, 33, 24)
+y <- c(10, 10, 22, 26, 16, 22, 11, 20)
+z <- c(14, 15, 35, 16, 11, 23, 10, 41)
+matrix <- cbind(x, y, z)
+cosine(matrix)
+# output
+      x         y         z
+x 1.0000000 0.9561517 0.8761308
+y 0.9561517 1.0000000 0.9163248
+z 0.8761308 0.9163248 1.0000000
+```
+
+#### Salton index
+
+[Definition](https://math.stackexchange.com/questions/730511/preferential-attachment-and-salton-similarity-in-directed-networks): number of common neighbors between two nodes divided by the square root of the multiplication of the degrees of the nodes
+
+https://cran.r-project.org/web/packages/linkprediction/vignettes/proxfun.html#salton-index-cosine-similarity
+
+1.2 Salton Index (cosine similarity) measures the cosine of the angle between columns of the adjacency matrix, corresponding to given vertices. This measure is commonly used in information retrieval.
+
+$$s_{xy}=\frac{|\Gamma(x)\cap\Gamma(y)|}{\sqrt{k_x\times k_y}}.$$
+
+```r
+# R
+# Function to calculate s_xy  
+# where x, y influencers
+calculate_s_xy <- function(x_neighbors, y_neighbors) {
+  # x_neighbors: vector of neighbors of node x
+  # y_neighbors: vector of neighbors of node y
+  
+  # Calculate the size of the intersection of neighbors
+  intersection_size <- length(intersect(x_neighbors, y_neighbors))
+  
+  # Calculate the degree of nodes x and y
+  k_x <- length(x_neighbors)
+  k_y <- length(y_neighbors)
+  
+  # Calculate s_xy
+  s_xy <- intersection_size / sqrt(k_x * k_y)
+  
+  return(s_xy)
+}
+
+# Example usage:
+x_neighbors <- c(1, 2, 3, 4)  # Replace with actual neighbors of x
+y_neighbors <- c(3, 4, 5, 6)  # Replace with actual neighbors of y
+
+s_xy <- calculate_s_xy(x_neighbors, y_neighbors)
+print(s_xy)
+
+```
