@@ -29,6 +29,25 @@ salton_index <- function (x_followers, y_followers) {
   return(salton_index)
 }
 
+
+salton_index_matrix <- function(data_total, influencer_names) {
+  n <- length(influencer_names)
+  salton_matrix <- matrix(0, nrow = n, ncol = n)
+  rownames(salton_matrix) <- influencer_names
+  colnames(salton_matrix) <- influencer_names
+  
+  for (i in 1:n) {
+    x_name <- influencer_names[i]
+    x_followers <- get_followers(data_total, x_name)
+    for (j in 1:n) {
+      y_name <- influencer_names[j]
+      y_followers <- get_followers(data_total, y_name)
+      salton_matrix[i, j] <- salton_index(x_followers, y_followers)
+    }
+  }
+  return(salton_matrix)
+}
+
 #create_san <- function() {
 
   influencer_names <- names(json_data$stored)  
@@ -73,9 +92,19 @@ salton_index <- function (x_followers, y_followers) {
   
 #}
 
-x_followers <- get_followers(total, "alynicolee1126")
+
+## debug 
+
+# try it out salton index
+x_followers <- get_followers(total, "huffpost")
 y_followers <- get_followers(total, "huffpost")
 
 salton <- salton_index(x_followers, y_followers)
+
+# Create the Salton index matrix
+salton_matrix <- salton_index_matrix(total, influencer_names)
+
+# Print the Salton index matrix
+print(salton_matrix)
 
 #create_san()
