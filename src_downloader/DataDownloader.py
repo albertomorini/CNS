@@ -21,7 +21,7 @@ def writeLog(message, level):
 # @data {dict} the information retrieved
 # @filename {string} filename with extension
 # @pathDst {string} directory path where we ant to store/update the file [optional]
-def storeData(data, filename, pathDst='../data_downloaded/'):
+def storeData(data, filename, pathDst='../data_downloaded/',mode='w'):
 
     try:  #check if the file exits
         with open(pathDst+filename,'r') as f: # Load the ClientID/ClientSecret from private json
@@ -34,7 +34,7 @@ def storeData(data, filename, pathDst='../data_downloaded/'):
     dummy['stored'].append(data);
 
     # write new data
-    ff = open(pathDst+filename,'w')
+    ff = open(pathDst+filename,mode)
     ff.write(json.dumps(dummy))
     ff.close
 
@@ -131,7 +131,7 @@ def getAuthToken():
 # @start_date {string} in format UTC (eg: 20210123)
 # @end_date {string} must be no more than 30 days after the start_date
 # DOCS: https://developers.tiktok.com/doc/research-api-specs-query-videos/
-def downloadVideo(query, start_date, end_date, cursor): 
+def download_Video(query, start_date, end_date, cursor): 
     res = requests.post(TikTok_URLs['videos'],
     headers={
         'Content-Type':'application/json',
@@ -157,7 +157,7 @@ def downloadVideo(query, start_date, end_date, cursor):
 # @video_id {integer} the reference of the tiktok video
 # @return {dict/none}
 # DOCS: https://developers.tiktok.com/doc/research-api-specs-query-video-comments/
-def downloadComments(video_id, cursor):
+def download_Comments(video_id, cursor):
     res = requests.post(TikTok_URLs['comments'],
     headers={
         'Content-Type':'application/json',
@@ -179,7 +179,7 @@ def downloadComments(video_id, cursor):
 # @username {string}
 # @return {dict/none} the information otherwise None
 # DOCS: https://developers.tiktok.com/doc/research-api-specs-query-user-info/
-def downloadUser(username):
+def download_User(username):
     res = requests.post(TikTok_URLs['user'],
     headers={
         'Authorization':'Bearer '+getAuthToken(),
@@ -197,7 +197,7 @@ def downloadUser(username):
 
 
 # DOCS: https://developers.tiktok.com/doc/research-api-specs-query-user-reposted-videos/
-def repostedVideo(username, cursor):
+def download_VideoReposted(username, cursor):
     res = requests.post(TikTok_URLs['repostedVideo'],
     headers={
         'Authorization':'Bearer '+getAuthToken(),
@@ -216,7 +216,7 @@ def repostedVideo(username, cursor):
         return None
 
 # DOCS: https://developers.tiktok.com/doc/research-api-specs-query-user-followers/
-def downloadFollowers(username,cursor):
+def download_Followers(username,cursor):
     time.sleep(0.01)
     res = requests.post(TikTok_URLs['followers'],
     headers={
@@ -243,7 +243,7 @@ def downloadFollowers(username,cursor):
 # MAIN
 
 
-def followerAfterVideo(username,video_createdTS,video_id):
+def processFollowers(username,video_createdTS,video_id):
     hour_scope = 10800 # 3 Hours
 
     followersPool= dict()
@@ -252,7 +252,7 @@ def followerAfterVideo(username,video_createdTS,video_id):
     for i in range(0,24): #plus three days (so 4 days of followers in total)
         dummyTS = dummyTS+(hour_scope*i) ##incrementing 3 hours
         try:
-            tmpFollowers = downloadFollowers(username,str(dummyTS))
+            tmpFollowers = download_Followers(username,str(dummyTS))
             followersPool[dummyTS]= tmpFollowers
             time.sleep(2) ## wait just two sec before download another set
 
@@ -261,27 +261,33 @@ def followerAfterVideo(username,video_createdTS,video_id):
 
         print(username+"-"+str(i))
 
-    storeData(followersPool,'followers_'+username+"_"+str(video_id)+".json")
+    tmp = dict()
+    tmp[video_id]=followersPool
+    storeData(tmp,'followers_'+username+".json",mode='a')
 
 
-def main(query, limitVideo, limitComment, preambleFileName):
-    print('started for: '+preambleFileName)
-    for counter_video in range (0, limitVideo,100): #download each video (incrementing the TikTok cursors by 100 each time - is the max)
-        resVideo = downloadVideo(query,'20240501','20240522',counter_video)
-        storeData(resVideo,(preambleFileName+'video.json')) # store the videos retrieved
-        print('Downloaded video '+str(counter_video)+'/' + str(limitVideo))
+
+def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
+    print('PROCESS VIDEO STARTED')
+    for counter_video in range (0, nrVideo,100): #download each video (incrementing the TikTok cursors by 100 each time - is the max)
+        resVideo = download_Video(query,startDate,endDate,counter_video)
+        
+        storeData(resVideo,('video_'+filename+'.json')) # store the videos retrieved
+        
+        print('Downloaded video '+str(counter_video)+'/' + str(nrVideo)) ## print the state
 
         if(resVideo is not None):
             for singleVideo in resVideo['data']['videos']: #for each video downloaded
                 try:
-                    writeLog('Processing video id: '+str(singleVideo['id']),'INFO')
-                    for counter_comment in range(0,limitComment,100): # download the comment of the video
-                        resComments = downloadComments(singleVideo['id'],counter_comment)
-                        storeData(resComments,(preambleFileName+'comments.json')) #store the comments retrieved
-                        print('\t Downloaded comment '+str(counter_comment)+"/"+str(limitComment))
+                    ##COMMENTS
+                    for counter_comment in range(0,nrComments,100): # download the comment of the video
+                        resComments = download_Comments(singleVideo['id'],counter_comment)
+                        storeData(resComments,('comments_'+filename+'.json')) #store the comments retrieved
+                        print('\t Downloaded comment '+str(counter_comment)+"/"+str(nrComments))
 
                     print("\tDownloading followers from three days to: "+convertUnix2HumanTime(singleVideo['create_time']))
-                    followerAfterVideo(singleVideo['username'],singleVideo['create_time'],singleVideo['id'])
+                    ##FOLLOWERS
+                    processFollowers(singleVideo['username'],singleVideo['create_time'],singleVideo['id'])
 
                 except Exception as e:
                     writeLog('Error downloading comments of video: '+str(singleVideo['id'])+' - err: '+str(e),'WARNING')
@@ -291,19 +297,31 @@ def main(query, limitVideo, limitComment, preambleFileName):
 
 
 
-
-tmpQuery= {
-    "and": [
+## Almost official
+# videoQuery={
+#      "and": [
+#         {
+#             "operation": "IN",
+#             "field_name": "username",
+#             "field_values": [
+#                 "huffpost","aoc","bernie","cnn","nytimes","washingtonpost","dailymail","alynicolee1126","dailywire"
+#             ]
+#         }
+#     ]
+# }
+videoQuery={
+     "or": [
         {
             "operation": "IN",
             "field_name": "username",
             "field_values": [
-                "huffpost"
+                "huffpost","alynicolee1126"
             ]
         }
     ]
 }
+#,"cnn","nytimes","dailymail","alynicolee1126","dailywire"
 
 ## 100 video - 100 comments
-main(tmpQuery,100,100,'huffpost')
+processVideo(videoQuery,100,200,'20240501','20240520','test')
 
