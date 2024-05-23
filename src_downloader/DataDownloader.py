@@ -45,6 +45,10 @@ def converterHumanTimeToUnix(year,month,day):
     seconds = time.mktime(time_tuple) #my timezone
     return calendar.timegm(time_tuple) #GMT timezone
 
+def convertUnix2HumanTime(p_timestamp):
+    ts = int(p_timestamp)
+    return str(datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
+
 #______________________________________________________
 # TIKTOK INTEGRATION
 
@@ -212,7 +216,7 @@ def repostedVideo(username, cursor):
         return None
 
 # DOCS: https://developers.tiktok.com/doc/research-api-specs-query-user-followers/
-def getFollowers(username,cursor):
+def downloadFollowers(username,cursor):
     time.sleep(0.01)
     res = requests.post(TikTok_URLs['followers'],
     headers={
@@ -238,54 +242,68 @@ def getFollowers(username,cursor):
 
 # MAIN
 
-# def main(query, limitVideo, limitComment, preambleFileName):
-#     print('started for: '+preambleFileName)
-#     for counter_video in range (0, limitVideo,100): #download each video (incrementing the TikTok cursors by 100 each time - is the max)
-#         resVideo = downloadVideo(query,'20240301','20240330',counter_video)
-#         storeData(resVideo,(preambleFileName+'video.json')) # store the videos retrieved
-#         print('Downloaded video '+str(counter_video)+'/' + str(limitVideo))
-#         if(resVideo is not None):
-#             for singleVideo in resVideo['data']['videos']: #for each video downloaded
-#                 try:
-#                     writeLog('Processing video id: '+str(singleVideo['id']),'INFO')
-#                     for counter_comment in range(0,limitComment,100): # download the comment of the video
-#                         resComments = downloadComments(singleVideo['id'],counter_comment)
-#                         storeData(resComments,(preambleFileName+'comments.json')) #store the comments retrieved
-#                         print('\t Downloaded comment '+str(counter_comment)+"/"+str(limitComment))
-#                     #TODO: download also profile information?
-#                 except Exception as e:
-#                     writeLog('Error downloading comments of video: '+str(singleVideo['id'])+' - err: '+str(e),'WARNING')
-#                     pass
-#         else:
-#             writeLog('Video NoneType','ERROR') # just a warning, 
+
+def followerAfterVideo(username,video_createdTS,video_id):
+    hour_scope = 10800 # 3 Hours
+
+    followersPool= dict()
+    # GRAIN of 3h -> 3h * 8 (request) = 1(24hours) day => 8request * 3 = 24 requests
+    dummyTS = video_createdTS
+    for i in range(0,24): #plus three days (so 4 days of followers in total)
+        dummyTS = dummyTS+(hour_scope*i) ##incrementing 3 hours
+        try:
+            tmpFollowers = downloadFollowers(username,str(dummyTS))
+            followersPool[dummyTS]= tmpFollowers
+            time.sleep(2) ## wait just two sec before download another set
+
+        except Exception as e: 
+            print(e)
+
+        print(username+"-"+str(i))
+
+    storeData(followersPool,'followers_'+username+"_"+str(video_id)+".json")
+
+
+def main(query, limitVideo, limitComment, preambleFileName):
+    print('started for: '+preambleFileName)
+    for counter_video in range (0, limitVideo,100): #download each video (incrementing the TikTok cursors by 100 each time - is the max)
+        resVideo = downloadVideo(query,'20240501','20240522',counter_video)
+        storeData(resVideo,(preambleFileName+'video.json')) # store the videos retrieved
+        print('Downloaded video '+str(counter_video)+'/' + str(limitVideo))
+
+        if(resVideo is not None):
+            for singleVideo in resVideo['data']['videos']: #for each video downloaded
+                try:
+                    writeLog('Processing video id: '+str(singleVideo['id']),'INFO')
+                    for counter_comment in range(0,limitComment,100): # download the comment of the video
+                        resComments = downloadComments(singleVideo['id'],counter_comment)
+                        storeData(resComments,(preambleFileName+'comments.json')) #store the comments retrieved
+                        print('\t Downloaded comment '+str(counter_comment)+"/"+str(limitComment))
+
+                    print("\tDownloading followers from three days to: "+convertUnix2HumanTime(singleVideo['create_time']))
+                    followerAfterVideo(singleVideo['username'],singleVideo['create_time'],singleVideo['id'])
+
+                except Exception as e:
+                    writeLog('Error downloading comments of video: '+str(singleVideo['id'])+' - err: '+str(e),'WARNING')
+                    pass
+        else:
+            writeLog('Video NoneType','ERROR') # just a warning, 
 
 
 
-def main(influencerPools,year,month,day,nrDays):
-    #STORE the data retrieved in a structure like: {influencer+unixDate:followersPool}
-    storing = dict()
-    for influencer in influencerPools:
-        dummy = dict()
-        for ith_day in range(0,nrDays):
-            unixDate = converterHumanTimeToUnix(year,month,day)-(86400*ith_day) ##to reverse from 30 may - 0h | 30 may - 24h | 30 may - 48h
-            try:
-                followersPool = getFollowers(influencer,unixDate)
 
-                dummy[str(year)+"/"+str(month)+"/"+str(day+ith_day)]=followersPool
-                time.sleep(0.02) ## wait just two sec before download another set
-            except Exception:
-                print(Exception)
-                pass
-            print(str(ith_day)+"--"+influencer)
-            #TODO: here the point where we can hook up for the followers of followers (Marco's idea)
-            '''
-            for follower in followersPool:
-            getFollowers(follower)
-            '''
-        storing[influencer]=dummy
-        storeData(dummy,str(influencer)+".json")
-        time.sleep(2) ## wait just two sec before download another set
-    storeData(storing, str(year)+"_"+str(month)+"_"+str(day)+"x"+str(nrDays)+'.json')
+tmpQuery= {
+    "and": [
+        {
+            "operation": "IN",
+            "field_name": "username",
+            "field_values": [
+                "huffpost"
+            ]
+        }
+    ]
+}
 
+## 100 video - 100 comments
+main(tmpQuery,100,100,'huffpost')
 
-main(['aocinthehouse','huffpost','dailymail','cnn','alynicolee1126'],2023,10,20,90)
