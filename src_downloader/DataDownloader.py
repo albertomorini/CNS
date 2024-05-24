@@ -263,19 +263,21 @@ def processFollowers(username,video_createdTS,video_id):
 
     tmp = dict()
     tmp[video_id]=followersPool
-    storeData(tmp,'followers_'+username+".json",mode='a')
-
+    storeData(tmp,'followers_'+username+".json",mode='a') ##store followers of single influencer in a dedicated file
+    return tmp ## to store globally
 
 
 def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
     print('PROCESS VIDEO STARTED')
+
+    globalFollowers = dict()
     for counter_video in range (0, nrVideo,100): #download each video (incrementing the TikTok cursors by 100 each time - is the max)
         resVideo = download_Video(query,startDate,endDate,counter_video)
         
         storeData(resVideo,('video_'+filename+'.json')) # store the videos retrieved
         
         print('Downloaded video '+str(counter_video)+'/' + str(nrVideo)) ## print the state
-
+    
         if(resVideo is not None):
             for singleVideo in resVideo['data']['videos']: #for each video downloaded
                 try:
@@ -287,7 +289,14 @@ def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
 
                     print("\tDownloading followers from three days to: "+convertUnix2HumanTime(singleVideo['create_time']))
                     ##FOLLOWERS
-                    processFollowers(singleVideo['username'],singleVideo['create_time'],singleVideo['id'])
+                    followerVideo = processFollowers(singleVideo['username'],singleVideo['create_time'],singleVideo['id'])
+                    try:
+                        if(globalFollowers[singleVideo['username']]==None):
+                            globalFollowers[singleVideo['username']] = dict()
+                    except Exception:
+                        globalFollowers[singleVideo['username']] = dict()
+
+                    globalFollowers[singleVideo['username']].update(followerVideo)
 
                 except Exception as e:
                     writeLog('Error downloading comments of video: '+str(singleVideo['id'])+' - err: '+str(e),'WARNING')
@@ -295,6 +304,7 @@ def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
         else:
             writeLog('Video NoneType','ERROR') # just a warning, 
 
+    storeData(globalFollowers, 'followers_'+filename+".json")
 
 
 ## Almost official

@@ -1,0 +1,6 @@
+library(jsonlite)
+library(dplyr)
+library(tidyverse)
+library(tibble)
+library(ggplot2)
+json_data <- fromJSON(paste(readLines("src_downloader/test.json")))
