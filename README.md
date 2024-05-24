@@ -51,7 +51,7 @@
 4. Engagement
    1. Also of comments (sentiment analysis etc)
 
-**Meeting 21/04/2024:**
+**Meeting 21/05/2024:**
 - On followers:
    - smaller time stamps to increase granularity
    - pick user with low followers and see how data are returned
