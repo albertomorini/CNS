@@ -68,7 +68,7 @@
    - Chat GPT (or other LMs)
    - Bert
 - User followers + ideology = see increment or decrement of polarization
-e
+
 
 ## Phase 3
 > Report + Powerpoint

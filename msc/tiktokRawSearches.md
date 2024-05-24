@@ -284,3 +284,36 @@ s_xy <- calculate_s_xy(x_neighbors, y_neighbors)
 print(s_xy)
 
 ```
+
+## Sentiment Analysis 
+
+### Polarization
+
+https://medium.com/@schaider/graph-level-neural-networks-for-predicting-social-network-polarization-4916d9589ecc
+
+Polarization is measured using the network disagreement index (NDI). Given a graph G = (V, E, w) and a *vector of opinions* x ∈ [0,1]ⁿ of individuals in V, the network disagreement index P(G, z) is defined as follows:
+
+![measure pol](https://miro.medium.com/v2/resize:fit:1100/format:webp/1*H50YDPIOAyONJeAcx1C5Pw.png)
+
+[...]nodes were assigned initial opinions and bias levels. Let A be the adjacency matrix for our generated graph. For a given node i, its initial opinions xᵢ(0) are given by:
+
+![opinion values](https://miro.medium.com/v2/resize:fit:720/format:webp/1*P7clD_5TxlzyssfrYeeWfg.png)
+
+https://www.researchgate.net/publication/289172658_A_measure_of_polarization_on_social_media_NetworksBased_on_community_boundaries
+
+Measure polarization with communities, more similar to echo chambers than actual opion checking 
+
+### Echo Chambers
+
+https://www.sciencedirect.com/science/article/pii/S2468696424000016
+
+Sentiment analysis used
+
+https://arxiv.org/abs/2307.04668
+
+Distance based
+
+---
+We use a graphical view (SAN graph) + salton index to measure distance.
+
+### SA - Bert
