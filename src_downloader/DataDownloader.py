@@ -21,7 +21,7 @@ def writeLog(message, level):
 # @data {dict} the information retrieved
 # @filename {string} filename with extension
 # @pathDst {string} directory path where we ant to store/update the file [optional]
-def storeData(data, filename, pathDst='../data_downloaded/',mode='w',directly=False):
+def storeData(data, filename, pathDst='../data_downloaded/',directly=False):
 
     try:  #check if the file exits
         with open(pathDst+filename,'r') as f: # Load the ClientID/ClientSecret from private json
@@ -31,13 +31,13 @@ def storeData(data, filename, pathDst='../data_downloaded/',mode='w',directly=Fa
         dummy = dict()
         dummy['stored']= list()
 
-    # if(directly):
-    #     dummy = data ##store directly what downloaded, without creating a complex JSON (used mainly for followers)
-    # else:
-    dummy['stored'].append(data);
+    if(directly):
+        dummy = data ##store directly what downloaded, without creating a complex JSON (used mainly for followers)
+    else:
+        dummy['stored'].append(data);
 
     # write new data
-    ff = open(pathDst+filename,mode)
+    ff = open(pathDst+filename,"w")
     ff.write(json.dumps(data))
     ff.close
 
@@ -149,7 +149,6 @@ def download_Video(query, start_date, end_date, cursor):
         #'is_random':'false' => if omitted is false
     })
     )
-    print(res.status_code)
     if(res.status_code==200):
         return res.json()
     else:
@@ -173,7 +172,6 @@ def download_Comments(video_id, cursor):
         'cursor': cursor #Note: only the top 1000 comments will be returned, so cursor + max_count <= 1000.
     })
     )
-    print(res.json())
     if(res.status_code==200):
         return res.json()
     else:
@@ -234,9 +232,6 @@ def download_Followers(username,cursor):
         'cursor': cursor #NOTE: unix timestamp of the day that we want to download (on 24th may user X,Y has started following $username -> return X,Y)
     })
     )
-    print(res.json())
-
-
     if(res.status_code==200):
         return res.json()
     else:
@@ -257,7 +252,7 @@ def processFollowers(username,video_createdTS,video_id):
     followersPool= dict()
     # GRAIN of 3h -> 3h * 8 (request) = 1(24hours) day => 8request * 3 = 24 requests
     dummyTS = video_createdTS
-    for i in range(0,24): #plus three days (so 4 days of followers in total)
+    for i in range(0,40): #plus three days (so 4 days of followers in total)
         dummyTS = dummyTS+(hour_scope*i) ##incrementing 3 hours
         try:
             tmpFollowers = download_Followers(username,str(dummyTS))
@@ -277,7 +272,6 @@ def processFollowers(username,video_createdTS,video_id):
 def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
     print('PROCESS VIDEO STARTED')
 
-    ## TODO: WATCHOUT --> DO NOT USE ARRAY - for cleaner
     globalFollowers = dict()
     for counter_video in range (0, nrVideo,100): #download each video (incrementing the TikTok cursors by 100 each time - is the max)
         resVideo = download_Video(query,startDate,endDate,counter_video)
@@ -292,7 +286,7 @@ def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
                     ##COMMENTS
                     for counter_comment in range(0,nrComments,100): # download the comment of the video
                         resComments = download_Comments(singleVideo['id'],counter_comment)
-                        storeData(resComments,('comments_'+filename+'.json'),"a") #store the comments retrieved
+                        # storeData(resComments,('comments_'+filename+'.json')) #store the comments retrieved
                         print('\t Downloaded comment '+str(counter_comment)+"/"+str(nrComments))
 
                     print("\tDownloading followers from three days to: "+convertUnix2HumanTime(singleVideo['create_time']))
@@ -322,27 +316,18 @@ videoQuery={
             "operation": "IN",
             "field_name": "username",
             "field_values": [
-               "alynicolee1126" ,"huffpost","thedailybeast","babylonbee"
+                "huffpost" 
             ]
         }
     ]
 }
 
-# thedailybeast,"huffpost","alynicolee1126","babylonbee","repbowman"
+# "babylonbee", "thedailybeast","huffpost","alynicolee1126","repbowman"
 
-
-# videoQuery={
-#      "or": [
-#         {
-#             "operation": "IN",
-#             "field_name": "username",
-#             "field_values": [
-#                 "huffpost","alynicolee1126"
-#             ]
-#         }
-#     ]
-# }
 
 ## 100 video - 100 comments
-processVideo(videoQuery,100,200,'20240401','20240430','aprile_alynicolee1126')
+processVideo(videoQuery,100,200,'20240201','20240228','huffpost-febbraio')
+processVideo(videoQuery,100,200,'20240301','20240330','huffpost-marzo')
+processVideo(videoQuery,100,200,'20240501','20240520','huffpost-maggio')
+
 
