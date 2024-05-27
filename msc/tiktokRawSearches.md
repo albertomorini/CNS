@@ -316,4 +316,3 @@ Distance based
 ---
 We use a graphical view (SAN graph) + salton index to measure distance.
 
-### SA - Bert

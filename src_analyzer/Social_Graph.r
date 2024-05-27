@@ -4,12 +4,20 @@ library(tidyverse)
 library(tibble)
 library(ggplot2)
 
-json_data <- fromJSON(paste(readLines("data_downloaded/2024_5_17x40.json")))
+json_data <- fromJSON(paste(readLines("data_downloaded/+total_followers.json")))
+
+influencer_names <- unique(json_data$influencer) 
+    
+# Create a data frame with influencer names and their follower lists
+total <- data.frame(
+  influencer = json_data$influencer,
+  followerList = I(json_data$followerList)  # Use I() to prevent conversion of lists to strings
+)
 
 get_followers <- function (data_total, influencer_name) {
     data_total %>%
     filter(influencer == influencer_name) %>%
-    pull(followers) %>%
+    pull(followerList) %>%
     unlist() %>%
     unique()
 }
@@ -48,28 +56,20 @@ salton_index_matrix <- function(data_total, influencer_names) {
   return(salton_matrix)
 }
 
-#create_san <- function() {
 
-  influencer_names <- names(json_data$stored)  
-  dates <- names(json_data$stored[[influencer_names[1]]])   
-  InfXDate <- as_tibble(crossing(influencer_names,dates)) ## Cartesian product between InfluencersName and date
-  
-  ## for cartesian correlation (Influencer : day) we put the list of the nickname of that day
-  total <- InfXDate %>%
-    as_tibble %>%
-    rowwise() %>%
-    mutate (followers = list(json_data$stored[[influencer_names]][[dates]]$data$user_followers[[1]]$username)) %>%
-    select (influencer = influencer_names, day = dates,followers)
 
+
+create_san <- function() {  
   ## gets data.frame = [influencer | follower]
   total_transformed <- total %>% 
-    unnest(cols = followers) %>%
-    select(influencer, followers) %>%
-    rename(influencer=influencer, follower = followers)
-  
+    unnest(cols = followerList) %>%
+    select(influencer, followerList) %>%
+    rename(influencer = influencer, follower = followerList) %>%
+    filter(follower != "")
+
   nodes <- unique(data.frame(total_transformed$influencer, total_transformed$follower))  
-  
-  
+
+
   library(igraph) # load here and then detach otherwise error with $ and vectors
   
   # create graph, add lables and create device to display it
@@ -90,21 +90,18 @@ salton_index_matrix <- function(data_total, influencer_names) {
   detach(package:igraph)
   dev.off() # shut-off display device
   
-#}
+}
 
 
 ## debug 
 
-# try it out salton index
-x_followers <- get_followers(total, "huffpost")
-y_followers <- get_followers(total, "huffpost")
 
-salton <- salton_index(x_followers, y_followers)
+#x_followers <- get_followers(total, "huffpost")
+#y_followers <- get_followers(total, "huffpost")
+
+#salton <- salton_index(x_followers, y_followers)
 
 # Create the Salton index matrix
 salton_matrix <- salton_index_matrix(total, influencer_names)
-
-# Print the Salton index matrix
-print(salton_matrix)
 
 #create_san()
