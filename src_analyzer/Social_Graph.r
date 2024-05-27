@@ -34,6 +34,7 @@ right_total <- data.frame(
 )
 
 full_total <- rbind(left_total, right_total)
+full_influencer_names <- union(left_influencer_names, right_influencer_names)
 
 get_followers <- function (data_total, influencer_name) {
     data_total %>%
@@ -226,7 +227,7 @@ dev.off()
 #salton <- salton_index(x_followers, y_followers)
 
 # Create the Salton index matrix
-#salton_matrix <- salton_index_matrix(total, influencer_names)
+salton_matrix <- salton_index_matrix(full_total, full_influencer_names)
 
 #create_san()
-create_double_san()
+#create_double_san()
