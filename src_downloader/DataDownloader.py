@@ -316,7 +316,29 @@ videoQuery={
             "operation": "IN",
             "field_name": "username",
             "field_values": [
-                "huffpost" 
+                "repbowman" 
+            ]
+        }
+    ]
+}
+videoQuery2={
+     "and": [
+        {
+            "operation": "IN",
+            "field_name": "username",
+            "field_values": [
+                "thedailybeast" 
+            ]
+        }
+    ]
+}
+videoQuery23={
+     "and": [
+        {
+            "operation": "IN",
+            "field_name": "username",
+            "field_values": [
+                "aocinthehouse" 
             ]
         }
     ]
@@ -326,8 +348,16 @@ videoQuery={
 
 
 ## 100 video - 100 comments
-processVideo(videoQuery,100,200,'20240201','20240228','huffpost-febbraio')
-processVideo(videoQuery,100,200,'20240301','20240330','huffpost-marzo')
-processVideo(videoQuery,100,200,'20240501','20240520','huffpost-maggio')
+processVideo(videoQuery,100,200,'20240201','20240228','repbowman-febbraio')
+processVideo(videoQuery,100,200,'20240401','20240420','repbowman-aprile')
+processVideo(videoQuery,100,200,'20240501','20240520','repbowman-maggio')
+
+processVideo(videoQuery2,100,200,'20240201','20240228','thedailybeast-febbraio')
+processVideo(videoQuery2,100,200,'20240301','20240330','thedailybeast-marzo')
+processVideo(videoQuery2,100,200,'20240501','20240520','thedailybeast-maggio')
+
+
+processVideo(videoQuery23,100,200,'20240301','20240330','aocinthehouse-marzo')
+processVideo(videoQuery23,100,200,'20240401','20240420','aocinthehouse-aprile')
 
 

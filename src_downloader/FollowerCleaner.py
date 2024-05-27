@@ -7,7 +7,8 @@ def convertUnix2HumanTime(p_timestamp):
     ts = int(p_timestamp)
     return str(datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
 
-followers = json.load(open("../data_downloaded/followers_huffpost-marzo.json"))
+path= "data_downloaded/followers_thedailybeast-aprile.json"
+followers = json.load(open("../"+path))
 total = []
 
 for singleInfluencer in followers.keys():
