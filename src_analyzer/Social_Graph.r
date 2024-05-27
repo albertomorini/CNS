@@ -72,9 +72,34 @@ create_san <- function() {
 
   library(igraph) # load here and then detach otherwise error with $ and vectors
   
-  # create graph, add lables and create device to display it
+  ## create graph, add lables and create device to display it
   my_san <- graph_from_data_frame(nodes, directed = FALSE)
-  V(my_san)$label <- V(my_san)$name
+  
+
+  ## Label all
+  #V(my_san)$label <- V(my_san)$name
+  ## Label inlfuencers only
+  V(my_san)$label <- ifelse(names(V(my_san)) %in% influencer_names, names(V(my_san)), NA)
+
+  ## Set vertex colors and sizes based on whether they are influencers
+  V(my_san)$color <- ifelse(names(V(my_san)) %in% influencer_names, "tomato", "blue")
+  V(my_san)$size <- ifelse(names(V(my_san)) %in% influencer_names, 1, 0.1)
+  
+
+  ## Adjust edge width
+  E(my_san)$width <- 0.01
+
+  ## Set Fruchterman-Reingold layout for better separation of clusters
+  #layout <- layout_with_fr(my_san)
+
+  ## Use Kamada-Kawai layout for a tighter grouping of clusters
+  layout <- layout_with_kk(my_san)
+
+  ## Mnimize node overlap
+  layout <- layout.norm(layout, xmin=-2, xmax=2, ymin=-2, ymax=2)
+
+
+  ## Create display device for graph (use png for testing)
   #svg(filename="san_graph.svg", width=100, height=100)
   png(filename="san_graph.png", width=1000, height=1000)
   
@@ -82,12 +107,21 @@ create_san <- function() {
   plot(
     my_san,
     main = "graph label",
+    vertex.label = V(my_san)$label,  # Only label influencers
+    vertex.size = V(my_san)$size,  # Size based on influencer status
+    vertex.color = V(my_san)$color,  # Color based on influencer status
+    vertex.label.cex = 0.7,  # Adjust label size
+    vertex.label.color = "black",  # Change label color for better visibility
     #vertex.label = ifelse(degree(my_san) > 1, V(my_san)$label, NA),  #remove follower lables
     vertex.size = 1,
     edge.width = 1.5,
-    vertex.color = c("cyan", "tomato")[1 + names(V(my_san)) %in% influencer_names],
+    edge.width = E(my_san)$width,  # Edge width
+    #vertex.color = c("cyan", "tomato")[1 + names(V(my_san)) %in% influencer_names],
+    layout = layout,
+    rescale = TRUE,
+    asp = 0  # Aspect ratio to fit the plot area
     ) 
-  detach(package:igraph)
+  detach(package:igraph, unload = TRUE)
   dev.off() # shut-off display device
   
 }
@@ -104,4 +138,4 @@ create_san <- function() {
 # Create the Salton index matrix
 salton_matrix <- salton_index_matrix(total, influencer_names)
 
-#create_san()
+create_san()
