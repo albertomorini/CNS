@@ -21,7 +21,7 @@ def writeLog(message, level):
 # @data {dict} the information retrieved
 # @filename {string} filename with extension
 # @pathDst {string} directory path where we ant to store/update the file [optional]
-def storeData(data, filename, pathDst='../data_downloaded/',mode='w'):
+def storeData(data, filename, pathDst='../data_downloaded/',directly=False):
 
     try:  #check if the file exits
         with open(pathDst+filename,'r') as f: # Load the ClientID/ClientSecret from private json
@@ -31,11 +31,14 @@ def storeData(data, filename, pathDst='../data_downloaded/',mode='w'):
         dummy = dict()
         dummy['stored']= list()
 
-    dummy['stored'].append(data);
+    if(directly):
+        dummy = data ##store directly what downloaded, without creating a complex JSON (used mainly for followers)
+    else:
+        dummy['stored'].append(data);
 
     # write new data
-    ff = open(pathDst+filename,mode)
-    ff.write(json.dumps(dummy))
+    ff = open(pathDst+filename,"w")
+    ff.write(json.dumps(data))
     ff.close
 
 
@@ -249,7 +252,7 @@ def processFollowers(username,video_createdTS,video_id):
     followersPool= dict()
     # GRAIN of 3h -> 3h * 8 (request) = 1(24hours) day => 8request * 3 = 24 requests
     dummyTS = video_createdTS
-    for i in range(0,24): #plus three days (so 4 days of followers in total)
+    for i in range(0,40): #plus three days (so 4 days of followers in total)
         dummyTS = dummyTS+(hour_scope*i) ##incrementing 3 hours
         try:
             tmpFollowers = download_Followers(username,str(dummyTS))
@@ -263,7 +266,6 @@ def processFollowers(username,video_createdTS,video_id):
 
     tmp = dict()
     tmp[video_id]=followersPool
-    storeData(tmp,'followers_'+username+".json",mode='a') ##store followers of single influencer in a dedicated file
     return tmp ## to store globally
 
 
@@ -284,7 +286,7 @@ def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
                     ##COMMENTS
                     for counter_comment in range(0,nrComments,100): # download the comment of the video
                         resComments = download_Comments(singleVideo['id'],counter_comment)
-                        storeData(resComments,('comments_'+filename+'.json')) #store the comments retrieved
+                        # storeData(resComments,('comments_'+filename+'.json')) #store the comments retrieved
                         print('\t Downloaded comment '+str(counter_comment)+"/"+str(nrComments))
 
                     print("\tDownloading followers from three days to: "+convertUnix2HumanTime(singleVideo['create_time']))
@@ -303,35 +305,29 @@ def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
                     pass
         else:
             writeLog('Video NoneType','ERROR') # just a warning, 
-
-    storeData(globalFollowers, 'followers_'+filename+".json")
+    
+    storeData(globalFollowers, 'followers_'+filename+".json",directly=True)
 
 
 ## Almost official
-# videoQuery={
-#      "and": [
-#         {
-#             "operation": "IN",
-#             "field_name": "username",
-#             "field_values": [
-#                 "huffpost","aoc","bernie","cnn","nytimes","washingtonpost","dailymail","alynicolee1126","dailywire"
-#             ]
-#         }
-#     ]
-# }
 videoQuery={
-     "or": [
+     "and": [
         {
             "operation": "IN",
             "field_name": "username",
             "field_values": [
-                "huffpost","alynicolee1126"
+                "huffpost" 
             ]
         }
     ]
 }
-#,"cnn","nytimes","dailymail","alynicolee1126","dailywire"
+
+# "babylonbee", "thedailybeast","huffpost","alynicolee1126","repbowman"
+
 
 ## 100 video - 100 comments
-processVideo(videoQuery,100,200,'20240501','20240520','test')
+processVideo(videoQuery,100,200,'20240201','20240228','huffpost-febbraio')
+processVideo(videoQuery,100,200,'20240301','20240330','huffpost-marzo')
+processVideo(videoQuery,100,200,'20240501','20240520','huffpost-maggio')
+
 
