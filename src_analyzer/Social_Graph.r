@@ -6,7 +6,7 @@ library(ggplot2)
 library(igraph)
 
 
-#json_data <- fromJSON(paste(readLines("msc/rightWingMoc.json")))
+json_data <- fromJSON(paste(readLines("msc/rightWingMoc.json")))
 #json_data <- fromJSON(paste(readLines("msc/influencersFollowersMorckUp.json")))
 
 left_data <- fromJSON(paste(readLines("msc/leftWingMoc.json")))
@@ -176,10 +176,14 @@ V(my_san)$size <- ifelse(names(V(my_san)) %in% left_influencer_names, 2,
 V(my_san)$label <- ifelse(names(V(my_san)) %in% c(left_influencer_names, right_influencer_names), names(V(my_san)), NA)
 
 
+
 ## Adjust edge width
 E(my_san)$width <- 0.000001
 # Set edge color with opacity
-edge_color <- adjustcolor("black", alpha.f = 0.05)  # Set edge opacity and color
+## Set edge color based on linked influencers
+edge_colors <- ifelse(ends(my_san, E(my_san))[,1] %in% left_influencer_names, "blue", "red")
+
+edge_color <- adjustcolor(edge_colors, alpha.f = 0.05)  # Set edge opacity and color
 E(my_san)$color <- edge_color
 
 ## Set Fruchterman-Reingold layout for better separation of clusters
@@ -201,7 +205,7 @@ plot(
   vertex.size = V(my_san)$size,
   vertex.color = V(my_san)$color,
   vertex.label.cex = 1.5,
-  vertex.label.color = "#9200CC",
+  vertex.label.color = "#048100",
   edge.width = 1.5,
   edge.width = E(my_san)$width,
   edge_color = E(my_san)$color,
