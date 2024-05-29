@@ -4,10 +4,11 @@ library(tidyverse)
 library(tibble)
 library(ggplot2)
 library(igraph)
+library(gt)
 
 ################ data retrieval and preparation ################
-
 ## Use for single SAN
+
 json_data <- fromJSON(paste(readLines("msc/rightWingMoc.json")))
 #json_data <- fromJSON(paste(readLines("msc/influencersFollowersMorckUp.json")))
 
@@ -20,8 +21,8 @@ total <- data.frame(
 )
 
 ##############################################################
-
 ## Use for double SAN
+
 ## If single json: use directly full total, then
 ## fill by hand left and right influencer names vectors
 left_data <- fromJSON(paste(readLines("msc/leftWingMoc.json")))
@@ -85,6 +86,7 @@ salton_index_matrix <- function(data_total, influencer_names) {
   }
   return(salton_matrix)
 }
+
 
 create_privacy_inference_table <- function(data_total) {
   total_transformed <- total %>%
@@ -259,6 +261,7 @@ create_double_san <- function() {
   dev.off()
 }
 
+
 ## debug
 
 
@@ -272,5 +275,8 @@ salton_matrix <- salton_index_matrix(full_total, full_influencer_names)
 
 privacy_table <- create_privacy_inference_table(total)
 
-create_san()
+#salton_matrix %>% gt()
+gt(as.data.frame(salton_matrix))
+
+# create_san()
 # create_double_san()
