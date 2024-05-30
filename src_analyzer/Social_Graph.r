@@ -88,7 +88,7 @@ salton_index_matrix <- function(data_total, influencer_names) {
 }
 
 
-create_privacy_inference_table <- function(data_total) {
+create_privacy_inference_data_frame <- function(data_total) {
   total_transformed <- total %>%
     unnest(cols = followerList) %>%
     select(influencer, followerList) %>%
@@ -122,6 +122,64 @@ create_privacy_inference_table <- function(data_total) {
   return(result)
 }
 
+create_salton_matrix_table <- function(matrix) {
+values <- matrix
+
+df <- as.data.frame(values)
+
+# Create a gt table from the data frame
+gt_table <- df %>%
+  gt(rownames_to_stub = TRUE)
+
+# Function to color row names
+color_row_names <- function(gt_table, rownames, color) {
+  for (name in rownames) {
+    gt_table <- gt_table %>%
+      tab_style(
+        style = cell_fill(color = color),
+        locations = cells_stub(rows = name)
+      )
+  }
+  return(gt_table)
+}
+
+# Function to color column names
+color_column_names <- function(gt_table, colnames, color) {
+  for (name in colnames) {
+    gt_table <- gt_table %>%
+      tab_style(
+        style = cell_fill(color = color),
+        locations = cells_column_labels(columns = name)
+      )
+  }
+  return(gt_table)
+}
+
+red_color <- adjustcolor("red", alpha.f = 0.5) # Set cell opacity and color
+blue_color <- adjustcolor("blue", alpha.f = 0.5) 
+
+
+gt_table <- color_row_names(gt_table, left_influencer_names, red_color)
+gt_table <- color_row_names(gt_table, right_influencer_names, blue_color)
+gt_table <- color_column_names(gt_table, left_influencer_names, red_color)
+gt_table <- color_column_names(gt_table, right_influencer_names, blue_color)
+
+
+# Save gt table as html 
+html_file <- "salton_matrix.html"
+gtsave(gt_table, html_file)
+
+
+## Needs chromium
+#png_file <- "salton_matrix.png"
+#gtsave(gt_table,png_file)
+
+# Save the gt table as png
+agg_png("salton_matrix.png", width = 800, height = 600, res = 144)
+print(gt_table)
+dev.off()
+
+}
 
 create_san <- function() {
   ## gets data.frame = [influencer | follower]
@@ -273,10 +331,9 @@ create_double_san <- function() {
 # Create the Salton index matrix
 salton_matrix <- salton_index_matrix(full_total, full_influencer_names)
 
-privacy_table <- create_privacy_inference_table(total)
+#privacy_data_frame <- create_privacy_inference_data_frame(total)
 
-#salton_matrix %>% gt()
-gt(as.data.frame(salton_matrix))
+create_salton_matrix_table(salton_matrix)
 
 # create_san()
 # create_double_san()
