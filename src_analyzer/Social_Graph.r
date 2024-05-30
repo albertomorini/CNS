@@ -10,7 +10,7 @@ library(gt)
 ## Use for single SAN
 
 json_data <- fromJSON(paste(readLines("msc/rightWingMoc.json")))
-#json_data <- fromJSON(paste(readLines("msc/influencersFollowersMorckUp.json")))
+# json_data <- fromJSON(paste(readLines("msc/influencersFollowersMorckUp.json")))
 
 influencer_names <- unique(json_data$influencer)
 
@@ -89,7 +89,7 @@ salton_index_matrix <- function(data_total, influencer_names) {
 
 
 create_privacy_inference_data_frame <- function(data_total) {
-  total_transformed <- total %>%
+  total_transformed <- data_total %>%
     unnest(cols = followerList) %>%
     select(influencer, followerList) %>%
     rename(influencer = influencer, follower = followerList) %>%
@@ -100,12 +100,12 @@ create_privacy_inference_data_frame <- function(data_total) {
     followers = total_transformed$follower
   ))
 
-  nodes$influencers <- as.character(nodes$influencers) 
-  nodes$followers <- as.character(nodes$followers) 
+  nodes$influencers <- as.character(nodes$influencers)
+  nodes$followers <- as.character(nodes$followers)
 
   followers_list <- unique(nodes$followers)
 
-  # Store the influencers associated with each follower 
+  # Store the influencers associated with each follower
   common_influencers <- lapply(followers_list, function(element) {
     unique(nodes$influencers[nodes$followers == element])
   })
@@ -122,64 +122,99 @@ create_privacy_inference_data_frame <- function(data_total) {
   return(result)
 }
 
+
+create_privacy_table <- function(privacy_df) {
+  # Ensure privacy_df$User and privacy_df$Influencers have the same length
+  min_length <- min(length(privacy_df$User), length(privacy_df$Influencers))
+  privacy_df$User <- privacy_df$User[1:min_length]
+  privacy_df$Influencers <- privacy_df$Influencers[1:min_length]
+
+
+  # Order by number of common followers
+  privacy_df <- privacy_df %>%
+    mutate(num_names = lengths(privacy_df$Influencers)) %>%
+    arrange(desc(num_names)) %>%
+    select(-num_names)
+
+  # Format for readability
+  privacy_df$Influencers <- sapply(privacy_df$Influencers, paste, collapse = ", ")
+
+  # Create gt table
+  tbl <- privacy_df %>%
+    gt()
+
+  # Print the table
+  print(tbl)
+
+  # Save as HTML
+  gtsave(tbl, "table.html")
+
+  # Save as PNG
+  gtsave(tbl, "table.png")
+}
+
+
 create_salton_matrix_table <- function(matrix) {
-values <- matrix
+  ## Needs both left and right influencers lists
+  ## Take salton matrix as input and create a graphical table as html and png
 
-df <- as.data.frame(values)
+  values <- matrix
 
-# Create a gt table from the data frame
-gt_table <- df %>%
-  gt(rownames_to_stub = TRUE)
+  df <- as.data.frame(values)
 
-# Function to color row names
-color_row_names <- function(gt_table, rownames, color) {
-  for (name in rownames) {
-    gt_table <- gt_table %>%
-      tab_style(
-        style = cell_fill(color = color),
-        locations = cells_stub(rows = name)
-      )
+  # Create a gt table from the data frame
+  gt_table <- df %>%
+    gt(rownames_to_stub = TRUE)
+
+  # Function to color row names
+  color_row_names <- function(gt_table, rownames, color) {
+    for (name in rownames) {
+      gt_table <- gt_table %>%
+        tab_style(
+          style = cell_fill(color = color),
+          locations = cells_stub(rows = name)
+        )
+    }
+    return(gt_table)
   }
-  return(gt_table)
-}
 
-# Function to color column names
-color_column_names <- function(gt_table, colnames, color) {
-  for (name in colnames) {
-    gt_table <- gt_table %>%
-      tab_style(
-        style = cell_fill(color = color),
-        locations = cells_column_labels(columns = name)
-      )
+  # Function to color column names
+  color_column_names <- function(gt_table, colnames, color) {
+    for (name in colnames) {
+      gt_table <- gt_table %>%
+        tab_style(
+          style = cell_fill(color = color),
+          locations = cells_column_labels(columns = name)
+        )
+    }
+    return(gt_table)
   }
-  return(gt_table)
+
+  red_color <- adjustcolor("red", alpha.f = 0.5) # Set cell opacity and color
+  blue_color <- adjustcolor("blue", alpha.f = 0.5)
+
+
+  gt_table <- color_row_names(gt_table, left_influencer_names, red_color)
+  gt_table <- color_row_names(gt_table, right_influencer_names, blue_color)
+  gt_table <- color_column_names(gt_table, left_influencer_names, red_color)
+  gt_table <- color_column_names(gt_table, right_influencer_names, blue_color)
+
+
+  # Save gt table as html
+  html_file <- "salton_matrix.html"
+  gtsave(gt_table, html_file)
+
+
+  ## Needs chromium
+  # png_file <- "salton_matrix.png"
+  # gtsave(gt_table,png_file)
+
+  # Save the gt table as png
+  agg_png("salton_matrix.png", width = 800, height = 600, res = 144)
+  print(gt_table)
+  dev.off()
 }
 
-red_color <- adjustcolor("red", alpha.f = 0.5) # Set cell opacity and color
-blue_color <- adjustcolor("blue", alpha.f = 0.5) 
-
-
-gt_table <- color_row_names(gt_table, left_influencer_names, red_color)
-gt_table <- color_row_names(gt_table, right_influencer_names, blue_color)
-gt_table <- color_column_names(gt_table, left_influencer_names, red_color)
-gt_table <- color_column_names(gt_table, right_influencer_names, blue_color)
-
-
-# Save gt table as html 
-html_file <- "salton_matrix.html"
-gtsave(gt_table, html_file)
-
-
-## Needs chromium
-#png_file <- "salton_matrix.png"
-#gtsave(gt_table,png_file)
-
-# Save the gt table as png
-agg_png("salton_matrix.png", width = 800, height = 600, res = 144)
-print(gt_table)
-dev.off()
-
-}
 
 create_san <- function() {
   ## gets data.frame = [influencer | follower]
@@ -320,20 +355,15 @@ create_double_san <- function() {
 }
 
 
-## debug
+###################################################################
 
 
-# x_followers <- get_followers(total, "huffpost")
-# y_followers <- get_followers(total, "huffpost")
+# salton_matrix <- salton_index_matrix(full_total, full_influencer_names)
+# create_salton_matrix_table(salton_matrix)
 
-# salton <- salton_index(x_followers, y_followers)
+# privacy_data_frame <- create_privacy_inference_data_frame(full_total)
+# create_privacy_table(privacy_data_frame)
 
-# Create the Salton index matrix
-salton_matrix <- salton_index_matrix(full_total, full_influencer_names)
-
-#privacy_data_frame <- create_privacy_inference_data_frame(total)
-
-create_salton_matrix_table(salton_matrix)
 
 # create_san()
 # create_double_san()
