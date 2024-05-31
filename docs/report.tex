@@ -1,38 +1,82 @@
-        %%******************************************%%
-        %%                                          %%
-        %%        Modello di tesi di laurea         %%
-        %%            di Andrea Giraldin            %%
-        %%                                          %%
-        %%             2 novembre 2012              %%
-        %%                                          %%
-        %%******************************************%%
+\documentclass[twocolumn]{article}
 
-        \input{report_config}
-        
-        \begin{document}
-        %\pagecolor{blond} %per occhi
-        %**************************************************************
-        % Materiale iniziale
-        %**************************************************************
-        % remove?
-        \frontmatter
-        \input{inizio-fine/frontespizio}
-        \input{inizio-fine/colophon}
-        \input{inizio-fine/sommario}
-        \input{inizio-fine/ringraziamenti}
-        \input{inizio-fine/indici}
-        \cleardoublepage
-        
-        %**************************************************************
-        % Materiale principale
-        %**************************************************************
-        \mainmatter
-        \input{chapters/intro}
-        \input{chapters/goals}
-        \input{chapters/methodology}
-        \input{chapters/results}
-        \input{chapters/extensions}
-        %**************************************************************
-        % Materiale finale
-        %**************************************************************
-        \end{document}
+% Include packages and document structure
+\input{report_config.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%               HEADER
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{
+    \vspace{-1cm}
+    \includegraphics[height=2.5cm]{images/logo_unipd.png}
+    \par
+    \vspace{0.5cm}
+    \textbf{Laboratory Report}\\
+    Report Title
+}
+\author{
+    Author: {Name Surname} \\
+    Supervisor: {Name Surname}
+}
+
+\date{27/07/2022}
+
+% Document begin
+\begin{document}
+\pagecolor{blond} %per occhi
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                 BODY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\input{sections/intro}
+%\input{sections/goals}
+%\input{sections/methodology}
+%\input{sections/results}
+%\input{sections/extensions}
+
+
+%% Objectives
+\section{Objectives}
+\lipsum[1]
+
+%% Setup description
+\section{Setup description}
+\lipsum[2-4]
+%% Results
+\section{Results}
+\lipsum[5-8]
+
+%% Conclusions
+\section{Conclusions}
+\lipsum[1]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%             BIBLIOGRAPHY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{apalike2}
+\bibliography{references}
+
+\end{document}
+
+
+\begin{document}
+%\pagecolor{blond} %per occhi
+%**************************************************************
+\section{Intro}
+\lipsum
+
+%\input{sections/intro}
+%\input{sections/goals}
+%\input{sections/methodology}
+%\input{sections/results}
+%\input{sections/extensions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%             BIBLIOGRAPHY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{apalike2}
+\bibliography{references}
+
+\end{document}
