@@ -10,13 +10,17 @@ library(fmsb)
 
 json_data <- fromJSON(paste(readLines("data_downloaded/+total_video.json")))
 
+jsonPublicInfo <- fromJSON(paste(readLines("data_downloaded/+total_publicInfo.json")))
+
+
 totalEngagements <- json_data %>%
   as_tibble() %>%
   filter(!is.null(username)) %>%
   group_by(username) %>%
   summarise(totalView = sum(view_count), totalShare = sum(share_count), totalLikes = sum(like_count), totalHashtag=sum(length(unique(hashtag_names))), totalComments = sum(comment_count))
-  
+totalEngagements <- merge(x=totalEngagements, y=jsonPublicInfo, by="username", all.x=TRUE)
 
+#Left outer: merge(x = df1, y = df2, by = "CustomerId", all.x = TRUE)
 
 totalLeftWing <- totalEngagements %>%
   as_tibble() %>%
@@ -28,7 +32,10 @@ totalLeftWing <- totalEngagements %>%
     totalShare = sum(totalShare),
     totalLikes = sum(totalLikes),
     totalComments = sum(totalComments),
-    totalHashtag = sum(totalHashtag)
+    totalHashtag = sum(totalHashtag),
+    totalFollowers = sum(follower_count),
+    totalFollowing = sum(following_count),
+    totalVerified = sum(is_verified)
   ) 
 
 totalRightWing <- totalEngagements %>%
@@ -41,7 +48,10 @@ totalRightWing <- totalEngagements %>%
     totalShare = sum(totalShare),
     totalLikes = sum(totalLikes),
     totalComments = sum(totalComments),
-    totalHashtag = sum(totalHashtag)
+    totalHashtag = sum(totalHashtag),
+    totalFollowers = sum(follower_count),
+    totalFollowing = sum(following_count),
+    totalVerified = sum(is_verified)
   ) 
 
 totalDivided <- bind_rows(totalLeftWing, totalRightWing)
@@ -52,9 +62,11 @@ totalDivided <- totalDivided %>%
     shares = (totalShare/100),
     likes = (totalLikes/100),
     comments = (totalComments/100),
-    NrHashtag = totalHashtag
+    NrHashtag = totalHashtag,
+    totalFollowers = (totalFollowers/1000),
+    totalFollowing = (totalFollowing/100)
   ) %>%
-  select(views, shares, likes, comments, NrHashtag)
+  select(views, shares, likes, comments, NrHashtag,totalFollowers)
 
 totalDivided <- rbind(rep(10000,5) , rep(0,5) , totalDivided)
 
@@ -89,15 +101,17 @@ colnames(traspost4Barplot) <- totalEngagements$username
 
 # create color palette:
 library(RColorBrewer)
-coul <- brewer.pal(5, "Pastel1") 
+coul <- brewer.pal(9, "Set3")
 
-# barplot(traspost4Barplot, 
-#         col=coul , 
-#         border="black", 
-#         space=0.1, 
-#         font.axis=1.5, 
-#         xlab="influencer",
-#         ylab="engagement"
-# )
+
+
+barplot(traspost4Barplot,
+        col=coul ,
+        border="black",
+        space=0.1,
+        font.axis=1.5,
+        xlab="influencer",
+        ylab="engagement"
+)
 
 ## TODO: da portare in percentuale???
