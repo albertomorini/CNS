@@ -37,19 +37,24 @@ followersHistory<-json_data %>%
 
 
 
-## GENERALE ANDAMENTO DI TUTTI GLI INFLUENCERS
-followersHistory %>%
-  filter(
-    nr>0 ##remove the zero just to create a line in the right time span
-  ) %>%
-ggplot(aes(x = time, y = nr, color = influencer)) +
-  geom_point() +
-  geom_labelsmooth(aes(label = influencer), fill = "white",
-                   method = "lm", formula = y ~ x,
-                   size = 3, linewidth = 1, boxlinewidth = 0.4) +
-  theme_bw() + guides(color = 'none') # remove legend
-
-
+# ## GENERALE ANDAMENTO DI TUTTI GLI INFLUENCERS
+# followersHistory %>%
+#   filter(
+#     nr>0 ##remove the zero just to create a line in the right time span
+#   ) %>%
+# ggplot(aes(x = time, y = nr, color = influencer)) +
+#   labs(
+#     title="Content impact"
+#   )+
+#   xlab("Time")+
+#   ylab("New followers")+
+#   geom_point() +
+#   geom_labelsmooth(aes(label = influencer), fill = "white",
+#                    method = "lm", formula = y ~ x, se=FALSE,
+#                    size = 3, linewidth = 0.8, boxlinewidth = 0.2) +
+#   theme_bw() + guides(color = 'none') # remove the legend
+# 
+# 
 
 
 
@@ -64,29 +69,24 @@ videoLeft <- video %>%
   filter(username =='aocinthehouse')
 # influencer %in% c('aocinthehouse','repbowman','clarksonlawson','real.benshapiro','huffpost')
 
+# 
 
-
-followersHistory %>%
+boh <-followersHistory %>%
   filter(
     influencer %in% influencerDepth
   ) %>%
-ggplot( aes(x = time, y = influencer, fill = nr)) +
+  ggplot( aes(x = time, y = influencer, fill = nr)) +
   geom_density_ridges_gradient(scale = 1.2, rel_min_height = 0.01) +
-  labs(title = 'Impact of a new post', subtitle='Increasing the followers') +
+  labs(title = 'Impact of a new post', subtitle='Increasing the followers',) +
   theme_ridges(grid = TRUE, center = TRUE) +
   geom_vline(xintercept=c(videoRight$create_time),linetype = "dashed", color="red")+
   geom_vline(xintercept=c(videoLeft$create_time),linetype = "dashed", color="blue")+
-  
-  # annotate("text", x = c(videoLeft$create_time), y = 3.9, colour = "blue")+
-  # geom_point() +
-  # geom_point(aes(x=5.6, y=3.9), colour="blue")
-  # theme_bw() + 
+  theme_bw() +
   scale_point_color_hue(l = 40) +
-  scale_discrete_manual(aesthetics = "point_shape", values = c(21, 22, 23,32,1,24,53,33))
-theme(
-  legend.position="none",
-  panel.spacing = unit(0.1, "lines"),
-  strip.text.x = element_text(size = 8)
-)
-+annotate(x=c(videoLeft$create_time),y=+Inf,label="Target Length",geom="text")
+  scale_discrete_manual(aesthetics = "point_shape", values = c(21, 22,23,32,1,224,253,33))
 
+
+
+# annotate(geom="text", x="2019", y=1600, label="Breonna Taylor", color="#BD0026",size=4.5)+ 
+#   annotate(geom="point", x="2020", y=1570, color="#BD0026")+
+#   
