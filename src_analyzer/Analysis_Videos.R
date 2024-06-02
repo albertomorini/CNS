@@ -90,13 +90,13 @@ legend(-2.3,1,
 # TODO: remember to add the dimension normalized - le views sono in ordine di 100mila
 
 
-tmp <- matrix(c(totalEngagements$totalView,totalEngagements$totalShare, totalEngagements$totalLikes,totalEngagements$totalComments, totalEngagements$totalHashtag), nrow=length(totalEngagements$username))
-colnames(tmp) <- c("views","shares","likes","comments","hashtag")
+tmp <- matrix(c(totalEngagements$totalView,totalEngagements$totalShare, totalEngagements$totalLikes,totalEngagements$totalComments, totalEngagements$totalHashtag,totalEngagements$follower_count), nrow=length(totalEngagements$username))
+colnames(tmp) <- c("views","shares","likes","comments","hashtag","followers")
 rownames(tmp) <- totalEngagements$username
 
 
 traspost4Barplot <- t(tmp)
-rownames(traspost4Barplot) <- c("views","shares","likes","comments","hashtag")
+rownames(traspost4Barplot) <- c("views","shares","likes","comments","hashtag","followers")
 colnames(traspost4Barplot) <- totalEngagements$username
 
 # create color palette:
@@ -111,7 +111,8 @@ barplot(traspost4Barplot,
         space=0.1,
         font.axis=1.5,
         xlab="influencer",
-        ylab="engagement"
+        ylab="engagement",
 )
+
 
 ## TODO: da portare in percentuale???

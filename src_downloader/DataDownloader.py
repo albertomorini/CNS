@@ -316,7 +316,7 @@ videoQuery={
             "operation": "IN",
             "field_name": "username",
             "field_values": [
-                "bidenhq" 
+                "newyorker" 
             ]
         }
     ]
@@ -328,9 +328,9 @@ videoQuery={
 ## 100 video - 100 comments
 
 
-processVideo(videoQuery,100,200,'20240301','20240330','bidenhq-marzo')
-processVideo(videoQuery,100,200,'20240401','20240430','bidenhq-aprile')
-processVideo(videoQuery,100,200,'20240510','20240530','bidenhq-maggio')
+processVideo(videoQuery,100,200,'20240301','20240330','newyorker-marzo')
+processVideo(videoQuery,100,200,'20240401','20240430','newyorker-aprile')
+# processVideo(videoQuery,100,200,'20240510','20240530','newyorker-maggio')
 
 
 

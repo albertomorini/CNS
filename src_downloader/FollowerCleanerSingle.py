@@ -7,7 +7,7 @@ def convertUnix2HumanTime(p_timestamp):
     ts = int(p_timestamp)
     return str(datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
 
-path= "data_downloaded/processed/followers_aocinthehouse-febbraio.json"
+path= "data_downloaded/followers_newyorker-maggio.json"
 followers = json.load(open("../"+path))
 total = []
 
