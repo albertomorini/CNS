@@ -13,6 +13,7 @@ https://en.wikipedia.org/wiki/2024_Democratic_Party_presidential_primaries#Candi
 - Nancy Pelosi
 - Robert F. Kennedy Jr.
 - ofc Joe Biden
+> done
 
 
 Republican Politician List (search on tiktok) + sources:
