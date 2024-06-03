@@ -1,1 +1,72 @@
-\section{Privacy and data chambers}
+\section{Privacy and echo chambers}
+To help visualize all the gathered data, to see the presence of echo chambers and to infer political views of users, data regarding followers of super-users has been used to create a social network graph and a cosine similarity matrix.
+
+\subsection{Data Preparation}
+First of all a list of super-users's followers has been gathered via TikTok APIs in the form of a JSON file, with the following structure (we can ignore \verb+"videoID"+ and \verb+"videoDate"+):
+
+\begin{lstlisting}[language=json]
+[
+    {
+        "influencer": "ith-super-user Name",
+        "videoID": "videoID",
+        "videoDate": "videoDate",
+        "followerList": [
+            "follower1",
+            "follower2",
+            "follower3",
+            "follower4",
+            "follower5",
+            "follower6",
+            "follower-k"
+        ]
+    }
+]
+\end{lstlisting}
+
+For better understanding here follows a portion of the real JSON data used:
+
+\begin{lstlisting}[language=json]
+    {
+        "influencer": "huffpost",
+        "videoID": "7354208741996186911",
+        "videoDate": "2024-04-05 11:46:08",
+        "followerList": [
+            "mathieucambet",
+            "raphclp",
+            "jennet153"
+        ]
+    },
+    {
+        "influencer": "huffpost",
+        "videoID": "7354208741996186911",
+        "videoDate": "2024-04-05 20:46:08",
+        "followerList": [
+            "doodlegolden0",
+            "evanroyalaug",
+            "cshanebritt",
+            "kabed70"
+        ]
+    },
+\end{lstlisting}
+
+JSON data then gets imported to \textit{Social\_Graph.r} to analyze:
+
+\begin{lstlisting}[language=R]
+data <- fromJSON(paste(readLines("data.json")))
+
+left_influencer_names <-  # vector of strings with left 
+                          # super-user names
+right_influencer_names <- # vector of strings with right 
+                          # super-user names
+
+# data.frame used to calculate all the graphs and tables
+full_total <- data.frame(
+  influencer = data$influencer,
+  followerList = I(data$followerList)
+)
+
+full_influencer_names <- union(left_influencer_names, 
+                               right_influencer_names)
+\end{lstlisting}
+
+TODO: jiust include graphic?

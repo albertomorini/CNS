@@ -389,4 +389,6 @@ create_double_san <- function() {
 
 
 # create_san()
- create_double_san()
+
+## needs more ram to compile final san graph
+# create_double_san()
