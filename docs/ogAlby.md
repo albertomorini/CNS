@@ -1,3 +1,5 @@
+CNS
+
 # TikTok Social Analysis 
 
 University of Padua's Advance Topics for Cybersecurity course's project.
@@ -111,7 +113,7 @@ How the api works - to insert into the paper
 
 
 ~~TikTok's API works as shit~~
-TikTok's API need a previous authentication composed with a Secret Key and a Client ID, obtainable through a personal request to the staff of the platform.
+TikTok's API needs a previous authentication composed with a Secret Key and a Client ID, obtainable through a personal request to the staff of the platform.
 Each calls to the API require to be authenticated with a Bearer token previously obtained via the authentication endpoint, then, the various endpoints responds to the query string and body of the HTTP request as standard.
 
 There's a limit quota of 100'000 records per day (reset at 12 AM UTC) for videos and comments, instead for followers/following endpoint the limit is settled up to 2M of records.
@@ -122,41 +124,66 @@ https://developers.tiktok.com/doc/research-api-faq/
 
 ### how much data we retrieved
 
-insert calcoli (li hai sull'iPad)
+For each video has been downloaded the followers up next to 5 days within an hour span of 3hours.
+With this method for every video can be retrieved:
+100 users * (24h/3h = 8 request per a single day, for 5 days= 40 request)
+In theory: 4000 followers for each video.
 
+But these numbers are right if and only if, there are new distinct followers, which is very difficult to obtain a slot of hundreds of new follower in that time span.
 
-## video impact
+Since the TikTok’s followers API returns the user which has started following the influencer from the date (in unix format) declared in the body of the request (called cursor). There’s the problem of duplicated accounts.
+
+i.e. if JohnDoe follows MrWhite in date 31/12/2023T10:00:00, and MrWhite doesn’t get 100 new followers between the next 3 hours, JohnDoe will be downloaded also in the request of the 31/12/2023T13:00:00 
+
+To avoid these problem, has been created a python script (DataCleaner.py) which keeps just the first occurrence (sorted by ascending  date) of the username founded in the total data downloaded. 
+
+Also the video informations has been stored and later analyzed
+
+We also provide to download the public information of the influencer, so a single call for each one.
+
+In DATA:
+- quanti followers?
+- Quanti video?
+
+## post impact
 
 We would analyze what's the impact of a new content posted by an influencer in terms of followers.
 
 So basically, has been downloaded all the video of the influencers in the last five month (as explained in chapters before), then, for each video has been downloaded the users which had followed the influencer between 5 days after.
 Certanly, this could be a bias, because a new follower can gained indipendently of the new post, but, nowadays in social network a content became virual almost immediatly or never will.
 
-Unluckly the API of the followers, accept a parameter "cursor" which represent the date of from when we'd like to get the followers, but, the API's response isn't the exactly day, in fact as mentioned in the docs:
-"citare la docs"
 
-So we basically download the followers into a smaller scope: followers every 3h for 5 days.
-At the end we of course gets some duplicates, that we've removed with a temporal logic: we keep the association of "username:datetime" only of the first occurrence
+FOR THIS ANALYSIS HAS BEEN REMOVED THE INFLUENCER WITH LESS OF $n NEW FOLLOWERS —> marked as “dead”
 
+In the first analysis has been monitored a simple amount of increment of new users, where almost for every influencer is pretty much continuous.
+**grafico**
 
+For the most outliner influencer instead, has been made a detailed analysis creating a detailed curve of the median, enriched with the timestamp of the creation of the new “post”.
+In example, is noticeable the increasing of new user of “aocinthehouse” after the content of $data.
 ** inserire il grafico **
-> In the graph we can see the followers trend divided per influencer through the time.
-> Since the followers are downloaded from the date of a video up to 5 days next, has also been added the timestamp of video published thus to search a correlation between followers and content.
+
+
+
 
 ## Engagement
 
-We'd like also to give a dimension of the data analyzed, so basically, for each video we retrived some basic information.
+Study the engagement on TikTok can shows how many people are reached and what's the approval quota of a content.
 
-In example, the API's for every video returns data like the numbers of view, comments, likes, shares
+Each “post” (in this case only video) has several information which can be used to give a dimension of the content in analysis.
 
-** inserire il grafico **
-> Study the engagement on TikTok can shows how many people are reached and what's the approval quota of a content.
-> So for every influencer has been conducted the same analysis, arranging the total views/comments/likes of videos
+In example, the API's returns data like the numbers of view, comments, likes, shares and so on.
 
-And also compared the two "wings" to spot the difference in terms of numbers
+Naturally, the views are the information with higher data, followed up to likes and comments.
+For these videos topic there’s a very low “repost” (called shares), which consist in a user to repost the video of the influencer.
 
+SOME DATA IN THE ANALYSIS HAS BEEN NORMALIZED: the views/likes/comments are in order of thousands.
 
-TODO: dividere/spiegare le influenze di destra e di sinistra (as marco diceva, è più usato da gente di sx - i dx complottano?)
+To compare the two political wings, all the data has been divided into two subgroup based on the political side of the influencers.
+**inserire il grafico**
+
+And with a more detailed information, a curious fact can be noticed, about “$quelloGay” which owns the majority of the number in the content retrieved.
+>>>Can be defined as an “outliner” since is a very controversial person
+
 
 
 -----------------------------------
