@@ -176,3 +176,4 @@ TODO: dividere/spiegare le influenze di destra e di sinistra (as marco diceva, Ã
 - huffpost
 - aocinthehouse
 - repbowman
+- newyorker
