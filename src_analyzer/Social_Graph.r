@@ -9,38 +9,56 @@ library(gt)
 ################ data retrieval and preparation ################
 ## Use for single SAN
 
-json_data <- fromJSON(paste(readLines("msc/rightWingMoc.json")))
-# json_data <- fromJSON(paste(readLines("msc/influencersFollowersMorckUp.json")))
-
-influencer_names <- unique(json_data$influencer)
-
-# Create a data frame with influencer names and their follower lists
-total <- data.frame(
-  influencer = json_data$influencer,
-  followerList = I(json_data$followerList)
-)
+# json_data <- fromJSON(paste(readLines("msc/rightWingMoc.json")))
+# # json_data <- fromJSON(paste(readLines("msc/influencersFollowersMorckUp.json")))
+# 
+# influencer_names <- unique(json_data$influencer)
+# 
+# # Create a data frame with influencer names and their follower lists
+#  total <- data.frame(
+#    influencer = json_data$influencer,
+#    followerList = I(json_data$followerList)
+#  )
 
 ##############################################################
 ## Use for double SAN
 
 ## If single json: use directly full total, then
 ## fill by hand left and right influencer names vectors
-left_data <- fromJSON(paste(readLines("msc/leftWingMoc.json")))
-right_data <- fromJSON(paste(readLines("msc/rightWingMoc.json")))
+# left_data <- fromJSON(paste(readLines("msc/leftWingMoc.json")))
+# right_data <- fromJSON(paste(readLines("msc/rightWingMoc.json")))
+# 
+# left_influencer_names <- unique(left_data$influencer)
+# right_influencer_names <- unique(right_data$influencer)
+# 
+# left_total <- data.frame(
+#   influencer = left_data$influencer,
+#   followerList = I(left_data$followerList)
+# )
+# right_total <- data.frame(
+#   influencer = right_data$influencer,
+#   followerList = I(right_data$followerList)
+# )
+# 
+# full_total <- rbind(left_total, right_total)
+# full_influencer_names <- union(left_influencer_names, right_influencer_names)
 
-left_influencer_names <- unique(left_data$influencer)
-right_influencer_names <- unique(right_data$influencer)
+######################################################
+# Final Data
 
-left_total <- data.frame(
-  influencer = left_data$influencer,
-  followerList = I(left_data$followerList)
+final_data <- fromJSON(paste(readLines("data_downloaded/final_followers.json")))
+
+final_left_names <- c("thedailybeast","huffpost","aocinthehouse","repbowman","newyorker")
+final_right_names <- c("alynicolee1126","babylonbee","real.benshapiro","clarksonlawson","notvictornieves")
+
+left_influencer_names <- final_left_names
+right_influencer_names <- final_right_names
+
+full_total <- data.frame(
+  influencer = final_data$influencer,
+  followerList = I(final_data$followerList)
 )
-right_total <- data.frame(
-  influencer = right_data$influencer,
-  followerList = I(right_data$followerList)
-)
 
-full_total <- rbind(left_total, right_total)
 full_influencer_names <- union(left_influencer_names, right_influencer_names)
 
 ##########################################################
@@ -140,17 +158,17 @@ create_privacy_table <- function(privacy_df) {
   privacy_df$Influencers <- sapply(privacy_df$Influencers, paste, collapse = ", ")
 
   # Create gt table
-  tbl <- privacy_df %>%
+  gt_table <- privacy_df %>%
     gt()
 
   # Print the table
-  print(tbl)
+  # print(gt_table)
 
   # Save as HTML
-  gtsave(tbl, "table.html")
+  gtsave(gt_table, "privacy_table.html")
 
   # Save as PNG
-  gtsave(tbl, "table.png")
+  # gtsave(gt_table, "privacy_table.png")
 }
 
 
@@ -205,14 +223,18 @@ create_salton_matrix_table <- function(matrix) {
   gtsave(gt_table, html_file)
 
 
+  # Save as PNG
+  # gtsave(gt_table, "salton_matrix.png")
+
+
   ## Needs chromium
   # png_file <- "salton_matrix.png"
   # gtsave(gt_table,png_file)
 
   # Save the gt table as png
-  agg_png("salton_matrix.png", width = 800, height = 600, res = 144)
-  print(gt_table)
-  dev.off()
+  # agg_png("salton_matrix.png", width = 800, height = 600, res = 144)
+  # print(gt_table)
+  # dev.off()
 }
 
 
@@ -334,7 +356,8 @@ create_double_san <- function() {
 
 
   ## Create display device for graph
-  png(filename = "combined_san_graph.png", width = 1000, height = 1000)
+  ## combined with moc data works
+  png(filename = "final_combined_san_graph.png", width = 1000, height = 1000)
 
   plot(
     my_san,
@@ -366,4 +389,6 @@ create_double_san <- function() {
 
 
 # create_san()
+
+## needs more ram to compile final san graph
 # create_double_san()
