@@ -95,3 +95,24 @@ Lets clarify: if \textit{@user-Alice} follows super-user \textit{@aocinthehouse}
 Conversely, if \textit{@user-Bob} follows super-user \textit{@thesun} (official account of UK's tabloid The Sun), which is classified as a right-leaning super-user, the edge connecting them will be red.
 
 \subsection{Cosine Similarity}
+Having a graphical representation of a network is certainly valuable: pictures are not only more effortless to recognize and process than words, but also easier to recall. When words enter long-term memory they do so with a single code. Pictures, on the other hand, contain two codes: one visual and the other verbal, each stored in different places in the brain (Paivio). The dual-coding nature of images allows for two independent ways of accessing visual memories, increasing the odds of remembering at least one of them. Adding illustrations to text, researchers have concluded, aids comprehension and learning \cite{10.21083/partnership.v10i1.3137}.\\
+That being said, it is still advisable to measure numerically the similarity between users.\\
+Broadly speaking, there are two types of similarity measures between nodes in a network: edge similarity, that provides the index of intersection of node parents (which are, of course among the neighbors) of the nodes being compared, and global structure similarity, that aims to evaluate the similarity between two nodes in the context of the whole network. Regarding the latter, Salton Index, Jaccard Index, and Sorensen Index always have good performance, while cosine similarity computational complexity is very high when applied to very large volumes of data \cite{smilarityMeasuresSurvey}: when the data is dense, the structure-based indices (like Salton's) can perform competitively good as Cosine index, while with lower computational complexity. Furthermore, when the data is sparse, the structure-based indices give even better results than Cosine index \cite{10.1016/j.phpro.2010.07.033}.\\
+
+\aCapo{}
+\includegraphics[width = .5\textwidth]{images/salton_precision.png}
+
+The above table shows values regarding precision in inferring similarity between users: Salton index (\textit{Sal} column) seems to perform the best \cite{10.1016/j.phpro.2010.07.033}, therefore it has been used in this work to measure similarity between super-users.\\
+Salton index formula is as follows: 
+
+$$s_{xy}=\frac{|\Gamma(x)\cap\Gamma(y)|}{\sqrt{k_x\times k_y}}.$$
+
+All index values are calculated for each couple of super-users, and are shown in the following table where, as mentioned before, blue represent left-leaning and red represent right-leaning super users: 
+
+\aCapo{}
+\includegraphics[width = .5\textwidth]{images/final_salton_matrix.png}
+
+Salton index values range between 0 and 1, and the diagonal of the matrix represented in the table shows all values equal to 1 because, of course, a super-user is always identical to itself.\\
+The table confirms numerically what could be seen in the social graph: super-users share very few followers, which means that each community is a form of echo chamber.
+
+\subsection{Privacy Inference}
