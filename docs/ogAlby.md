@@ -9,6 +9,25 @@ In this project, every call is parameterized to retrieve the maximum allowed dat
 
 https://developers.tiktok.com/doc/research-api-faq/
 
+## Download component
+
+Has ben realized a wrapper for the API which simply make the WebAPI calls and returns the results.
+Almost every public endpoint provided has been covered, such as: followers, videos, comments, following, liked videos, user information.
+
+The script simply authenticate to TikTok's endpoint, then start executing the batch of data required; storing each response in a json file (which later will be analyzed).
+
+The program will start executing the download of videos passing in the body the query composed (explained later), then store the video information and next download the followers.
+This for a number of video specified, in this case 100 videos for month.
+```python
+processVideo(videoQuery,100,200,'20240301','20240330','influencer-month')
+# @query {JSON} the video query as specified in the tiktok docs
+# @nrVideo {int} the number of video which we want to download
+# @startDate {string} in unix format
+# @endDate {string} in unix format -- NB: can't be greater than a month
+# @filename {string} of json where data will be stored
+def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
+```
+
 
 ## Amount of data downloaded
 
@@ -27,6 +46,15 @@ Since the TikTok’s followers API returns the user which has started following 
 For example, *if JohnDoe follows MrWhite on 31/12/2023 at 10:00:00 and MrWhite does not gain 100 new followers in the next 3 hours, JohnDoe will also be included in the request at 31/12/2023 at 13:00:00.*
 
 To solve this problem, a Python script (DataCleaner.py) was created, which keeps only the first occurrence (sorted by ascending date) of each username found in the total downloaded data.
+
+```python
+for i in range(0,len(total)-1):
+    for j in range(i+1, len(total)):
+        if(total[i].get("influencer")==total[j].get("influencer")): ##check if the same influencer (we don't want to remove common followers)
+            total[i]["followerList"] = [elem for elem in total[i].get("followerList") if elem not in total[j].get("followerList")]
+       
+```
+
 
 Additionally, video information has been stored and later analyzed.
 

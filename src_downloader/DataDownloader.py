@@ -269,6 +269,12 @@ def processFollowers(username,video_createdTS,video_id):
     return tmp ## to store globally
 
 
+
+# @query {JSON} the video query as specified in the tiktok docs
+# @nrVideo {int} the number of video which we want to download
+# @startDate {string} in unix format
+# @endDate {string} in unix format -- NB: can't be greater than a month
+# @filename {string} of json where data will be stored
 def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
     print('PROCESS VIDEO STARTED')
 
@@ -284,10 +290,10 @@ def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
             for singleVideo in resVideo['data']['videos']: #for each video downloaded
                 try:
                     ##COMMENTS
-                    for counter_comment in range(0,nrComments,100): # download the comment of the video
-                        resComments = download_Comments(singleVideo['id'],counter_comment)
-                        # storeData(resComments,('comments_'+filename+'.json')) #store the comments retrieved
-                        print('\t Downloaded comment '+str(counter_comment)+"/"+str(nrComments))
+                    # for counter_comment in range(0,nrComments,100): # download the comment of the video
+                    #     resComments = download_Comments(singleVideo['id'],counter_comment)
+                    #     # storeData(resComments,('comments_'+filename+'.json')) #store the comments retrieved
+                    #     print('\t Downloaded comment '+str(counter_comment)+"/"+str(nrComments))
 
                     print("\tDownloading followers from three days to: "+convertUnix2HumanTime(singleVideo['create_time']))
                     ##FOLLOWERS
@@ -328,7 +334,7 @@ videoQuery={
 ## 100 video - 100 comments
 
 
-processVideo(videoQuery,100,200,'20240301','20240330','newyorker-marzo')
+processVideo(videoQuery,100,200,'20240301','20240330','influencer-month')
 processVideo(videoQuery,100,200,'20240401','20240430','newyorker-aprile')
 # processVideo(videoQuery,100,200,'20240510','20240530','newyorker-maggio')
 
