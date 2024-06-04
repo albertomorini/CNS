@@ -23,4 +23,5 @@ testFollowers/b.json
 testFollowers/node.js
 salton_matrix_files/
 
-docs/build/
+docs/build/*
+!docs/build/report.pdf
