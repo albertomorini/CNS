@@ -46,7 +46,7 @@ library(gt)
 ######################################################
 # Final Data
 
-final_data <- fromJSON(paste(readLines("data_downloaded/final_followers.json")))
+final_data <- fromJSON(paste(readLines("data_downloaded/+total_followers.json")))
 
 final_left_names <- c("thedailybeast","huffpost","aocinthehouse","repbowman","newyorker")
 final_right_names <- c("alynicolee1126","babylonbee","real.benshapiro","clarksonlawson","notvictornieves")
@@ -381,14 +381,20 @@ create_double_san <- function() {
 ###################################################################
 
 
-# salton_matrix <- salton_index_matrix(full_total, full_influencer_names)
-# create_salton_matrix_table(salton_matrix)
-
-# privacy_data_frame <- create_privacy_inference_data_frame(full_total)
-# create_privacy_table(privacy_data_frame)
+ # salton_matrix <- salton_index_matrix(full_total, full_influencer_names)
+ # create_salton_matrix_table(salton_matrix)
+ # 
+ # privacy_data_frame <- create_privacy_inference_data_frame(full_total)
+ # create_privacy_table(privacy_data_frame)
 
 
 # create_san()
 
 ## needs more ram to compile final san graph
-# create_double_san()
+ # create_double_san()
+
+nr_totalFollowers=0
+for(i in full_total$followerList){
+  nr_totalFollowers <- nr_totalFollowers+length(i)
+}
+print(nr_totalFollowers)

@@ -38,23 +38,25 @@ followersHistory<-json_data %>%
 
 
 # ## GENERALE ANDAMENTO DI TUTTI GLI INFLUENCERS
-# followersHistory %>%
-#   filter(
-#     nr>0 ##remove the zero just to create a line in the right time span
-#   ) %>%
-# ggplot(aes(x = time, y = nr, color = influencer)) +
-#   labs(
-#     title="Content impact"
-#   )+
-#   xlab("Time")+
-#   ylab("New followers")+
-#   geom_point() +
-#   geom_labelsmooth(aes(label = influencer), fill = "white",
-#                    method = "lm", formula = y ~ x, se=FALSE,
-#                    size = 3, linewidth = 0.8, boxlinewidth = 0.2) +
-#   theme_bw() + guides(color = 'none') # remove the legend
-# 
-# 
+flowOfFollowers <- followersHistory %>%
+  filter(
+    nr>0 ##remove the zero just to create a line in the right time span
+  ) %>%
+ggplot(aes(x = time, y = nr, color = influencer)) +
+  labs(
+    title="Content impact"
+  )+
+  xlab("Time")+
+  ylab("New followers")+
+  geom_point() +
+  geom_labelsmooth(aes(label = influencer), fill = "white",
+                   method = "lm", formula = y ~ x, se=FALSE,
+                   size = 3, linewidth = 0.8, boxlinewidth = 0.2) +
+  theme_bw() + guides(color = 'none') # remove the legend
+
+
+ ggsave(file="./test.svg", plot=flowOfFollowers, width=10, height=8)
+
 
 
 
@@ -71,7 +73,7 @@ videoLeft <- video %>%
 
 # 
 
-boh <-followersHistory %>%
+detailedPostImpact <-followersHistory %>%
   filter(
     influencer %in% influencerDepth
   ) %>%
@@ -85,8 +87,7 @@ boh <-followersHistory %>%
   scale_point_color_hue(l = 40) +
   scale_discrete_manual(aesthetics = "point_shape", values = c(21, 22,23,32,1,224,253,33))
 
+detailedPostImpact
 
 
-# annotate(geom="text", x="2019", y=1600, label="Breonna Taylor", color="#BD0026",size=4.5)+ 
-#   annotate(geom="point", x="2020", y=1570, color="#BD0026")+
-#   
+

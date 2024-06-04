@@ -1,205 +1,102 @@
-CNS
+# API 
 
-# TikTok Social Analysis 
+TikTok's API requires prior authentication using a Secret Key and a Client ID, which can be obtained by making a personal request to the platform's staff. Then, each call to the API must be authenticated with a Bearer token, previously obtained through the opportune authentication endpoint.
+Each endpoints has it's own query string and body parameter required in the HTTP request.
 
-University of Padua's Advance Topics for Cybersecurity course's project.
-Made by 
-- Alberto Morini ([albertomorini](https://github.com/albertomorini)) 
-- Marco Bellò ([mhetacc](https://github.com/mhetacc))
+There is a daily limit of 100,000 records (reset at 12 AM UTC) for videos and comments. Meanwhile for the followers/following endpoint, the limit is set at 2 million records.
 
-## Project Goals
-
-The idea is utilize TikTok's official [APIs](https://developers.tiktok.com/doc) in order to study users behaviors and political positioning in the context of the next 2024 US presidential elections.
-
-### Goal 1 : Social Graph
-
-The idea behind a Social Network Graph is to clearly show relations (represented as edges) between users (represented as nodes). \
-This is done in order to see how high is the degree of intersection between different political fields (or how low it is, leading to echo chambers), starting from "root" nodes represented by a list of selected influencer and moving on through their respective followers. 
-
-Let's see an example: 
-![social_graph_mocUP](../docs/images/san_moc.png)
-
-We can clearly see the idea in action: user *@corylapen* represent an intersection between the user-bases of *@aoc* and *@huffpost*. In this case we do not have a bridge between two political areas (both these influencer are left-leaning) but its clear how this could be utilized.
-
-### Goal 2 : Followers Region
-
-It could be of interest to learn the followers nationality of our pool of influencers: this will allow us to either conjecture about possible outsider's influence, and to whom it is directed (left or right wing). \
-This information can also be intertwined with data from both the social graph and the sentiment analysis, to get even more insights about the political landscape.
-
-### Goal 3 : Video Comments Sentiment Analysis 
-
-The idea is to use libraries and services from either R or AWS to do a sentiment analysis on the comments under the videos of our pools of influencers. \
-We can then use this information to see if the user-base is aggressive or supportive and, provided more information about it, we can see if this has any correlation with the political orientation or nationality of the users.
-
-### Goal n
-
-TODO?
- 
-## Methodology  
-
-First, two lists (left-leaning and right-leaning) of influencer have been compiled, in order to have two "pools" of data with a clear political orientation. \
-This has been done to avoid creating the pools with automated tools, like ML or NLP, that have been deemed not precise enough. \
-**TODO**
-The influencer's handles used to gather data are summarized in the following list (EITHER the complete list can be found [here](https://github.com/albertomorini/CNS/blob/main/msc/handles.txt))(OR not all of the following handles have been used to gather the data presented in this report):
-- Right: 
-    - [@huffpost](https://www.tiktok.com/@huffpost)
-    - @aoc 
-    - tre
-- Left: 
-    - uno
-    - due 
-    - tre
-
-### Social Graph
-
-Starting from the influencers pool, we query their followers using TikTok's official [APIs](https://developers.tiktok.com/doc/research-api-specs-query-user-followers/)
-
-```python
-def getFollowers(username,cursor):
-    res = requests.post(TikTok_URLs['followers'],
-    headers={
-        'Authorization':'Bearer '+getAuthToken(),
-        'Content-Type': 'application/json'
-    },
-    data=json.dumps({
-        'username': username,
-        'max_count': 100, #Default is 20, max is 100.
-        'cursor': cursor #NOTE: unix timestamp
-    })
-    )
-    if(res.status_code==200):
-        return res.json()
-    else:
-        writeLog('Error downloading followers, code: '+str(res.status_code),'ERROR')
-        return None
-
-```
-
-TODO
-
-## Results
-
-### Social Graph
-
-TODO \
-a lot / not a lot of echo chambering 
-
-## Extensions
-
-### Social Graph
-
-TODO \
-- increase data layers 
-    - influencer -> user follower -> user follower following -> repeat
-- give node weight based on followers count
-    - from user info
-
-## Problems -> just put in methodolgy paragraph?
-
-### Social Graph
-
-TODO \
-User pooling via official APIs:
-- not truly randomic
-- no transparency
-- only 100 user per request -> per time stamp 
-
-
-
--------- 
-## API
-
-How the api works - to insert into the paper
-
-
-~~TikTok's API works as shit~~
-TikTok's API needs a previous authentication composed with a Secret Key and a Client ID, obtainable through a personal request to the staff of the platform.
-Each calls to the API require to be authenticated with a Bearer token previously obtained via the authentication endpoint, then, the various endpoints responds to the query string and body of the HTTP request as standard.
-
-There's a limit quota of 100'000 records per day (reset at 12 AM UTC) for videos and comments, instead for followers/following endpoint the limit is settled up to 2M of records.
-
-In this project, every call is parametrized to retrieve the maximum of allowed data, usually 100 records. However, the APIs doesn't always provide the exactly data requested, this maybe because there's no data to download or other unknown issues.
+In this project, every call is parameterized to retrieve the maximum allowed data, typically 100 records. However, the APIs do not always provide the exact data requested, possibly due to a lack of content requested or other unknown issues.
 
 https://developers.tiktok.com/doc/research-api-faq/
 
-### how much data we retrieved
 
-For each video has been downloaded the followers up next to 5 days within an hour span of 3hours.
+## Amount of data downloaded
+
+For each video, followers have been downloaded for up to 5 days, within 3-hour intervals.
+
 With this method for every video can be retrieved:
+```
 100 users * (24h/3h = 8 request per a single day, for 5 days= 40 request)
 In theory: 4000 followers for each video.
+```
 
-But these numbers are right if and only if, there are new distinct followers, which is very difficult to obtain a slot of hundreds of new follower in that time span.
+**Real data downloaded**
+In this research has been downloaded a total of:
+- 35798 distinct followers
+- 182 videos divided of 10 influencers
+
+However these theoretical number are reached only if the nwe followers are distinct in very call, which is difficult to achieve within such a short time span.
 
 Since the TikTok’s followers API returns the user which has started following the influencer from the date (in unix format) declared in the body of the request (called cursor). There’s the problem of duplicated accounts.
 
-i.e. if JohnDoe follows MrWhite in date 31/12/2023T10:00:00, and MrWhite doesn’t get 100 new followers between the next 3 hours, JohnDoe will be downloaded also in the request of the 31/12/2023T13:00:00 
+For example, *if JohnDoe follows MrWhite on 31/12/2023 at 10:00:00 and MrWhite does not gain 100 new followers in the next 3 hours, JohnDoe will also be included in the request at 31/12/2023 at 13:00:00.*
 
-To avoid these problem, has been created a python script (DataCleaner.py) which keeps just the first occurrence (sorted by ascending  date) of the username founded in the total data downloaded. 
+To solve this problem, a Python script (DataCleaner.py) was created, which keeps only the first occurrence (sorted by ascending date) of each username found in the total downloaded data.
 
-Also the video informations has been stored and later analyzed
+Additionally, video information has been stored and later analyzed.
 
-We also provide to download the public information of the influencer, so a single call for each one.
-
-In DATA:
-- quanti followers?
-- Quanti video?
-
-## post impact
-
-We would analyze what's the impact of a new content posted by an influencer in terms of followers.
-
-So basically, has been downloaded all the video of the influencers in the last five month (as explained in chapters before), then, for each video has been downloaded the users which had followed the influencer between 5 days after.
-Certanly, this could be a bias, because a new follower can gained indipendently of the new post, but, nowadays in social network a content became virual almost immediatly or never will.
+Has also been downloaded the public information of the influencer, with a single call for each one.
 
 
-FOR THIS ANALYSIS HAS BEEN REMOVED THE INFLUENCER WITH LESS OF $n NEW FOLLOWERS —> marked as “dead”
+--------- 
 
-In the first analysis has been monitored a simple amount of increment of new users, where almost for every influencer is pretty much continuous.
-**grafico**
+# POST IMPACT
 
-For the most outliner influencer instead, has been made a detailed analysis creating a detailed curve of the median, enriched with the timestamp of the creation of the new “post”.
-In example, is noticeable the increasing of new user of “aocinthehouse” after the content of $data.
-** inserire il grafico **
+One aim of this research is to analyze the impact of new content posted by an influencer on their followers count.
 
+To reach this purpose, has been downloaded all videos posted by influencers over the past five months. For each video, has been registered the users who followed the influencer within five days after the video was posted.
 
+There is a potential bias in this approach, as new followers can be gained independently of new posts. However, on social networks today, content either goes viral almost immediately or not at all. For this reason this approach has been considered valid.
 
+The query included in the body of the request contains simply the username, without filtering other parameters (such as hashtag, region). This decision has been made since an influencer can talks about various topics but still is belongs to a specific wing.
+```json
+{
+     "and": [
+        {
+            "operation": "IN",
+            "field_name": "username",
+            "field_values": [
+                "$influencer" 
+            ]
+        }
+    ]
+}
+```
 
-## Engagement
+For this analysis, has been considered just some influencer as considered the most influential (with more followers and engagement)
 
-Study the engagement on TikTok can shows how many people are reached and what's the approval quota of a content.
-
-Each “post” (in this case only video) has several information which can be used to give a dimension of the content in analysis.
-
-In example, the API's returns data like the numbers of view, comments, likes, shares and so on.
-
-Naturally, the views are the information with higher data, followed up to likes and comments.
-For these videos topic there’s a very low “repost” (called shares), which consist in a user to repost the video of the influencer.
-
-SOME DATA IN THE ANALYSIS HAS BEEN NORMALIZED: the views/likes/comments are in order of thousands.
-
-To compare the two political wings, all the data has been divided into two subgroup based on the political side of the influencers.
-**inserire il grafico**
-
-And with a more detailed information, a curious fact can be noticed, about “$quelloGay” which owns the majority of the number in the content retrieved.
->>>Can be defined as an “outliner” since is a very controversial person
-
+TODO: ![imgAllFollowers](TO)
+> Monitoring the simple increasing of new followers through time, as can be seen, is slowly incrementing for almost all influencer
 
 
------------------------------------
+Has been done a more specific analysis on two interesting influencer: "aocinthehouse" and "real.benshapiro".
 
-## Influencer downloaded:
+TODO: !img specific on influencer
+> This analysis consisted in the average trend of new followers, creating so a detailed curve enriched with timestamps of new post creations.
 
-**right wing**:
-- alynicolee1126
-- babylonbee
-- real.benshapiro
-- clarksonlawson
-- notvictornieves
+In example, there is a noticeable increase of new followers for "aocinthehoue" after the content posted on data TODO
 
-**left wing**:
 
-- thedailybeast
-- huffpost
-- aocinthehouse
-- repbowman
+----------------
+
+
+# ENGAGEMENT
+
+Studying engagement on TikTok can reveal how many people are reached and the approval rate of content.
+
+Each post (in this case, only videos) includes several pieces of information that can be used to analyze the content's impact. For example, the API returns data such as the number of views, comments, likes, shares, and more.
+
+Naturally, views have the highest numbers, followed by likes and comments. For these video topics, there is a very low "repost" rate (called shares), which refers to users reposting the influencer's video.
+
+In the analysis, some attributes has been normalized thus to obtain a graph well formed.
+In detail: views, likes, comments are reported in thousands
+
+!INSERT GRAPH
+
+To compare the two political wings, the data has been divided into two subgroups based on the side of influencers.
+
+!Insert Graph
+
+# CONCLUSION
+
+Sono le 00:15 bro, domani
