@@ -69,4 +69,18 @@ full_influencer_names <- union(left_influencer_names,
                                right_influencer_names)
 \end{lstlisting}
 
-TODO: jiust include graphic?
+Now we have three data structures to work with: two vectors with all super-user's names and a \verb+data.frame+ that stores all super-users and their gathered followers, like so: 
+
+\aCapo{}
+\includegraphics[width = .48\textwidth]{images/total_table_p23.png}
+
+\subsection{Social Graph}
+Broadly speaking, a social graph is a graph that represents social relations between entities, were vertices (or nodes) represents users and edges represents relations between such users. It is a model of representation of a social network, and has been referred to as "the global mapping of everybody and how they're related".\\ 
+To give a brief example: if Alice and Bob are friends on a social network, in a social graph they would be represented each as a node, and there would be an edge between them.\\
+The term was popularized at the Facebook F8 conference on May 24, 2007, when it was used to explain how the newly introduced Facebook Platform would take advantage of the relationships between individuals to offer a richer online experience \cite{wikiSAN}.
+
+\aCapo{}
+\includegraphics[width = .5\textwidth]{images/alice_bob_san.png}
+
+Employing a social graph has numerous advantages: it helps visualize all gathered data (all users and their relations), visualize the presence of echo chambers and give insights to analyze the network as a whole. \\
+The graph that follows clearly demonstrate that, at least with the gathered data, users do not interact with each other outside their communities, thus forming cliques that can easily be interpreted as echo chambers:
