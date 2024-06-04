@@ -20,11 +20,6 @@ With this method for every video can be retrieved:
 In theory: 4000 followers for each video.
 ```
 
-**Real data downloaded**
-In this research has been downloaded a total of:
-- 35798 distinct followers
-- 182 videos divided of 10 influencers
-
 However these theoretical number are reached only if the nwe followers are distinct in very call, which is difficult to achieve within such a short time span.
 
 Since the TikTok’s followers API returns the user which has started following the influencer from the date (in unix format) declared in the body of the request (called cursor). There’s the problem of duplicated accounts.
@@ -37,6 +32,9 @@ Additionally, video information has been stored and later analyzed.
 
 Has also been downloaded the public information of the influencer, with a single call for each one.
 
+In the end, the amount of data downloaded is:
+- 35798 distinct followers
+- 182 videos divided of 10 influencers
 
 --------- 
 
