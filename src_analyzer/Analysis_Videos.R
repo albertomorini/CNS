@@ -36,7 +36,9 @@ totalLeftWing <- totalEngagements %>%
     totalHashtag = sum(totalHashtag),
     totalFollowers = sum(follower_count),
     totalFollowing = sum(following_count),
-    totalVerified = sum(is_verified)
+    totalVerified = sum(is_verified),
+    counterAllLikes = sum(likes_count),
+    counterAllVideo = sum(video_count)
   ) 
 
 totalRightWing <- totalEngagements %>%
@@ -52,7 +54,9 @@ totalRightWing <- totalEngagements %>%
     totalHashtag = sum(totalHashtag),
     totalFollowers = sum(follower_count),
     totalFollowing = sum(following_count),
-    totalVerified = sum(is_verified)
+    totalVerified = sum(is_verified),
+    counterAllLikes = sum(likes_count),
+    counterAllVideo = sum(video_count)
   ) 
 
 totalDivided <- bind_rows(totalLeftWing, totalRightWing)
@@ -96,7 +100,7 @@ tmp <- matrix(c(
   totalEngagements$totalView/100,
   totalEngagements$totalShare, 
   totalEngagements$totalLikes/100,
-  totalEngagements$totalComments,
+  totalEngagements$totalComments/100,
   totalEngagements$totalHashtag,
   totalEngagements$follower_count/100
   ), nrow=length(totalEngagements$username))
@@ -119,7 +123,9 @@ barplot(traspost4Barplot,
         space=0.1,
         font.axis=1.5,
         xlab="influencer",
-        ylab="engagement scale"
+        ylab="engagement scale",
+        legend.text = condition,
+        title="Total score"
         )
 + theme_minimal()
 

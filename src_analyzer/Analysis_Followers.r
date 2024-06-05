@@ -44,7 +44,7 @@ flowOfFollowers <- followersHistory %>%
   ) %>%
 ggplot(aes(x = time, y = nr, color = influencer)) +
   labs(
-    title="Content impact"
+    title="Followers timeline"
   )+
   xlab("Time")+
   ylab("New followers")+
@@ -54,11 +54,7 @@ ggplot(aes(x = time, y = nr, color = influencer)) +
                    size = 3, linewidth = 0.8, boxlinewidth = 0.2) +
   theme_bw() + guides(color = 'none') # remove the legend
 
-
- ggsave(file="./test.svg", plot=flowOfFollowers, width=10, height=8)
-
-
-
+flowOfFollowers
 
 ### In depth su qualche influencer ricavato da prima -> repbowman è curioso, anche real.benshapiro
 
@@ -77,13 +73,13 @@ detailedPostImpact <-followersHistory %>%
   filter(
     influencer %in% influencerDepth
   ) %>%
-  ggplot( aes(x = time, y = influencer, fill = nr)) +
+  ggplot( aes(x = time, y = influencer, fill = nr),) +
   geom_density_ridges_gradient(scale = 1.2, rel_min_height = 0.01) +
-  labs(title = 'Impact of a new post', subtitle='Increasing the followers',) +
+  labs(title = 'Content impact') +
   theme_ridges(grid = TRUE, center = TRUE) +
   geom_vline(xintercept=c(videoRight$create_time),linetype = "dashed", color="red")+
   geom_vline(xintercept=c(videoLeft$create_time),linetype = "dashed", color="blue")+
-  theme_bw() +
+  theme_minimal() +
   scale_point_color_hue(l = 40) +
   scale_discrete_manual(aesthetics = "point_shape", values = c(21, 22,23,32,1,224,253,33))
 
