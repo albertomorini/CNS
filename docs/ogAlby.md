@@ -72,6 +72,27 @@ One aim of this research is to analyze the impact of new content posted by an in
 
 To reach this purpose, has been downloaded all videos posted by influencers over the past five months. For each video, has been registered the users who followed the influencer within five days after the video was posted.
 
+```json
+{
+    "data": {
+        "cursor": 1717588518,
+        "has_more": true,
+        "user_followers": [
+            {
+                "username": "rev6luv",
+                "display_name": "t."
+            },
+            {
+                "display_name": "Caden M. Flanagan 🇺🇲",
+                "username": "therealcadenflanagan"
+            },
+            ...
+    }
+}            
+```
+
+
+
 There is a potential bias in this approach, as new followers can be gained independently of new posts. However, on social networks today, content either goes viral almost immediately or not at all. For this reason this approach has been considered valid.
 
 The query included in the body of the request contains simply the username, without filtering other parameters (such as hashtag, region). This decision has been made since an influencer can talks about various topics but still is belongs to a specific wing.
