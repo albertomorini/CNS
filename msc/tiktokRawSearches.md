@@ -316,3 +316,36 @@ Distance based
 ---
 We use a graphical view (SAN graph) + salton index to measure distance.
 
+## Writing Numbers
+https://www.scribbr.com/academic-writing/numbers/
+
+ APA Style, one of the most common style guides used in academic writing.
+
+In general,**words should be used for numbers from zero through nine, and numerals should be used from 10 onwards**. This is true for both cardinal numbers (e.g., two, 11) and ordinal numbers (e.g., second, 11th). However, there are some important exceptions to this rule.
+
+Use numerals for numbers from zero to nine that are followed by a precise unit of measurement.
+Examples:
+
+> The samples measured 7 cm in diameter. (“cm” is a unit of measurement)
+
+> But: These three samples were subjected to further testing.
+
+Use words for any number that is used to start a sentence, with the exception of years.
+Examples:
+
+> Seventy-two thousand ink cartridges are sold every day.
+
+> Nineteenth-century novels often feature complicated plot lines.
+
+> But: 2008 saw record olive crops throughout the Mediterranean.
+
+Use words for common fractions and set expressions.
+Examples:
+
+> According to the survey, two thirds of the employees are dissatisfied.
+
+> Understanding the Five Pillars of Islam is a critical first step.
+
+> The Fourth of July is traditionally marked by a firework display.
+
+
