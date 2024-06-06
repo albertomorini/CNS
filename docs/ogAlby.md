@@ -1,31 +1,31 @@
 # API 
 
-TikTok's API requires prior authentication using a Secret Key and a Client ID, which can be obtained by making a personal request to the platform's staff. Then, each call to the API must be authenticated with a Bearer token, previously obtained through the opportune authentication endpoint.
-Each endpoints has it's own query string and body parameter required in the HTTP request.
+TikTok's API requires prior authentication using a Secret Key and a Client ID, which can be obtained by making a personal request to the platform's staff. Then, each call to the API must be authenticated with a Bearer token, previously obtained through the opportune authentication endpoint, which one has it's own query string and body parameter to be included in the HTTP request.
 
-There is a daily limit of 100,000 records (reset at 12 AM UTC) for videos and comments. Meanwhile for the followers/following endpoint, the limit is set at 2 million records.
+There is a daily limit of 100,000 records (reset at 12 AM UTC) for videos and comments. Meanwhile for the followers/following endpoint, the limit is set up to 2 million records.
+ **(((((Vai mark linka: https://developers.tiktok.com/doc/research-api-faq/)))))**
 
-In this project, every call is parameterized to retrieve the maximum allowed data, typically 100 records. However, the APIs do not always provide the exact data requested, possibly due to a lack of content requested or other unknown issues.
-
-https://developers.tiktok.com/doc/research-api-faq/
+In this project, every call is parameterized to retrieve the maximum allowed data, typically 100 records. However, the APIs do not always provide the exact data requested: possibly due to a lack of content requested or other unknown issues.
 
 ## Download component
 
-Has ben realized a wrapper for the API which simply make the WebAPI calls and returns the results.
-Almost every public endpoint provided has been covered, such as: followers, videos, comments, following, liked videos, user information.
+To gather data has been realized a wrapper for the API which simply make the WebAPI calls and store the results.
+Almost every public endpoint provided has been totally covered by the script, in specific: followers, videos, comments, following, liked videos, user information.
 
-The script simply authenticate to TikTok's endpoint, then start executing the batch of data required; storing each response in a json file (which later will be analyzed).
+The script simply in first step make the authentication to TikTok's endpoint (gaining the token, which will be refreshed by the program a few minutes before the 2 hours lifespan), then start executing the batch of data required; storing each response in a json file (which later will be analyzed).
 
-The program will start executing the download of videos passing in the body the query composed (explained later), then store the video information and next download the followers.
-This for a number of video specified, in this case 100 videos for month.
+The program will start executing the download of videos passing in the body the query composed (explained later), then store the video information and next download the followers of the influencer.
+This for a number of video specified, in this case 100 videos for month for each influencer selected (**see the query**)
 ```python
-processVideo(videoQuery,100,200,'20240301','20240330','influencer-month')
 # @query {JSON} the video query as specified in the tiktok docs
 # @nrVideo {int} the number of video which we want to download
 # @startDate {string} in unix format
 # @endDate {string} in unix format -- NB: can't be greater than a month
 # @filename {string} of json where data will be stored
 def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
+    ....
+
+processVideo(videoQuery,100,200,'20240301','20240330','influencer-month')
 ```
 
 
@@ -39,7 +39,7 @@ With this method for every video can be retrieved:
 In theory: 4000 followers for each video.
 ```
 
-However these theoretical number are reached only if the nwe followers are distinct in very call, which is difficult to achieve within such a short time span.
+However these theoretical number are reached only if the new followers are distinct in every call, which is difficult to achieve within such a short time span.
 
 Since the TikTok’s followers API returns the user which has started following the influencer from the date (in unix format) declared in the body of the request (called cursor). There’s the problem of duplicated accounts.
 
@@ -55,8 +55,7 @@ for i in range(0,len(total)-1):
        
 ```
 
-
-Additionally, video information has been stored and later analyzed.
+Additionally, video metadata (such as views, likes, number of comments, ...) has been stored and later analyzed.
 
 Has also been downloaded the public information of the influencer, with a single call for each one.
 
@@ -70,7 +69,7 @@ In the end, the amount of data downloaded is:
 
 One aim of this research is to analyze the impact of new content posted by an influencer on their followers count.
 
-To reach this purpose, has been downloaded all videos posted by influencers over the past five months. For each video, has been registered the users who followed the influencer within five days after the video was posted.
+To reach this purpose, has been downloaded all videos posted by an influencers over the past five months. For each video, has been registered the users who followed the influencer within five days after the video was posted.
 
 ```json
 {
@@ -95,7 +94,7 @@ To reach this purpose, has been downloaded all videos posted by influencers over
 
 There is a potential bias in this approach, as new followers can be gained independently of new posts. However, on social networks today, content either goes viral almost immediately or not at all. For this reason this approach has been considered valid.
 
-The query included in the body of the request contains simply the username, without filtering other parameters (such as hashtag, region). This decision has been made since an influencer can talks about various topics but still is belongs to a specific wing.
+The query included in the body of the request contains simply the username, without filtering other parameters (such as hashtag, region or anything else). This decision has been made since an influencer can talks about various topics but still is belongs to a specific wing. 
 ```json
 {
      "and": [
@@ -121,8 +120,12 @@ Has been done a more specific analysis on two interesting influencer: "aocintheh
 TODO: !img specific on influencer
 > This analysis consisted in the average trend of new followers, creating so a detailed curve enriched with timestamps of new post creations.
 
-In example, there is a noticeable increase of new followers for "aocinthehoue" after the content posted on data TODO
 
+In example, there is a noticeable increase of new followers for "aocinthehoue" after the content posted on data 15 February with 28k.
+
+Instead a curious fact is for "real.benshapiro" posting a lot of video with a low time gap but still gaining a increment without posting (on middle march), anyway this can confirm the bias assumed which the followers aren't just gained through tiktok platform. In fact, for example the official account of ben shapiro on 9th march 2024 has released a video with almost 300k views on YouTube (talking about political situation in Russia)
+
+***((LINKA TUTTOOO https://www.youtube.com/watch?v=GNye8kCfh4Y))***
 
 ----------------
 
@@ -146,4 +149,4 @@ To compare the two political wings, the data has been divided into two subgroups
 
 # CONCLUSION
 
-Sono le 00:15 bro, domani
+Sono le 00:15 bro, dopodomani
