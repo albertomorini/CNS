@@ -72,3 +72,17 @@
 
 ## Phase 3
 > Report + Powerpoint
+
+### Report still TODO
+
+
+- Alby correzione manuale un grafico (aggiunta legenda)
+- Conclusioni
+- Marco legge e corregge la mia
+- Io leggo e correggo Marco
+- Plotting SAN
+- Compilazione in Latex
+- Lettura finale
+
+### Powerpoint
+- TODO 
