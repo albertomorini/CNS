@@ -116,3 +116,24 @@ Salton index values range between 0 and 1, and the diagonal of the matrix repres
 The table confirms numerically what could be seen in the social graph: super-users share very few followers, which means that each community is a form of echo chamber.
 
 \subsection{Privacy Inference}
+Another way to take advantage of social network information, specifically the structure of the network (edges and their respective nodes), is to infer attributes of the users. While this falls under the umbrella of classification problems (identifying which of a set of categories (sub-populations) an observation (or observations) belongs to, like identifying an email as "spam" or "not-spam") \cite{wikiClassification}, and such techniques have already been employed in this context (for example k-nearest neighbors classification \cite{wikiKNN}).
+
+
+
+The objective presented in this paragraph is to infer political orientation of the users based on the super-users they follow and, considering the scarcity of super-users, the fact that only two sets are present (left and right leaning) and the high degree of isolation between communities, using complex statistical tools has been deemed unnecessary.\\
+The idea is as follows: if \textit{user-Alice} follows mainly left-leaning super-users (like \textit{aocinthehouse}, \textit{bernie} and \textit{repbowman}), that user is classified as left-leaning itself. Conversely, if \textit{user-Bob} follows mainly right-leaning super-users it is classified as right-leaning.\\
+The following table shows all users that follow more than one super-user form both lists of left and right leaning super-users, and the results are ordered by number of super-users followed.
+
+\aCapo{}
+\includegraphics[width = .5\textwidth]{images/final_privacy_table.png}
+
+As we can see, only six users follows more than three super-users and, generally speaking, most users follows super-users of the same political affiliation. Considering the scarcity of data, if a user follows less than 100\% of super-users of the same political spectrum, its hard to say anything about their political beliefs.\\
+Let's make some examples: taken into consideration the table shown above (which is a small sample of the original, available a the following link: \url{https://github.com/albertomorini/CNS/blob/main/privacy\_table.html}) we can say the following:
+
+\begin{itemize}
+    \item User \textit{mdmcgraw1} follows three super-users, all left-leaning, therefore is classified as left-leaning;
+    \item User \textit{audicharon} follows three super-users, one left-leaning, two right-leaning, therefore nothing can be said about its political orientation;
+    \item User \textit{chellen8er3.0} follows two super-users, both right-leaning, therefore is classified as right-leaning.
+\end{itemize}
+
+In future extensions, this classification could be improved by giving weights to super-users: \textit{repbowman} could weight more than \textit{notvictornieves} because the latter is an influencer, while the former is a politician.
