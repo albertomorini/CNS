@@ -76,13 +76,13 @@
 ### Report still TODO
 
 
-- Alby correzione manuale un grafico (aggiunta legenda)
+- ~~Alby correzione manuale un grafico (aggiunta legenda)~~
 - Conclusioni
 - Marco legge e corregge la mia
-- Io leggo e correggo Marco
+- ~~Io leggo e correggo Marco~~ (Marco ha spaccato)
 - Plotting SAN
 - Compilazione in Latex
 - Lettura finale
 
 ### Powerpoint
-- TODO 
+- WIP
