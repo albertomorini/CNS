@@ -77,12 +77,15 @@
 
 
 - ~~Alby correzione manuale un grafico (aggiunta legenda)~~
-- Conclusioni
-- Marco legge e corregge la mia
+- ~~Conclusioni~~
 - ~~Io leggo e correggo Marco~~ (Marco ha spaccato)
+
+
+- Marco legge e corregge la mia
 - Plotting SAN
 - Compilazione in Latex
 - Lettura finale
+- > Da aggiungere alle conclusioni: The data has been download with a Python 3.9 script on MacOS 
 
 ### Powerpoint
 - WIP
