@@ -1,6 +1,6 @@
 \section{Data Gathering}
 
-Considering the context (US elections) it is imperative to have users data divided between left and right leaning, so a group of \textit{super-users} was selected using various sources. 
+Considering the context (US elections) it is imperative to have users' data divided between left and right leaning, so a group of \textit{super-users} was selected using various sources. 
 \textit{Super-users} are defined as follows:
 
 \begin{itemize}
@@ -9,7 +9,7 @@ Considering the context (US elections) it is imperative to have users data divid
     \item Newspapers or news sites (i.e. The Washington Post).
 \end{itemize}
 
-The complete followers list, with relative sources (missing if selected arbitrarily by the authors), is the following:
+The complete followers list, with relative sources (missing if selected arbitrarily by the authors), is as follows:
 
 \begin{itemize}
     \item Left-Wing: 
@@ -50,25 +50,27 @@ The complete followers list, with relative sources (missing if selected arbitrar
         \end{itemize}
 \end{itemize}
 
-Only five of each groups had been selected to data gathering, due to time constraints (\textit{@alynicolee1126, @babylonbee, @real.benshapiro, @clarksonlawson, @notvictornieves} for right-leaning, and \textit{@thedailybeast, @huffpost, @aocinthehouse, @repbowman, @newyorker} for left-leaning super-users). All data has been gathered using TikTok's official APIs (\url{https://developers.tiktok.com/doc/overview/})
+Sue to time and computational constraints, only five super-users had been selected from each group: \textit{@alynicolee1126, @babylonbee, @real.benshapiro, @clarksonlawson, @notvictornieves} for right-leaning, and \textit{@thedailybeast, @huffpost, @aocinthehouse, @repbowman, @newyorker} for left-leaning super-users. \\
+All data has been gathered using TikTok's official APIs (\url{https://developers.tiktok.com/doc/overview/})
 
 \subsection{TikTok's APIs}
 
-TikTok's API requires prior authentication using a Secret Key and a Client ID, which can be obtained by making a personal request to the platform's staff. Then, each call to the API must be authenticated with a Bearer token, previously obtained through the opportune authentication endpoint, which one has it's own query string and body parameter to be included in the HTTP request.
+TikTok's API requires prior authentication using a Secret Key and a Client ID, both of which can be obtained by making a personal request to the platform's staff. 
+Then, each call to the API must be authenticated with a Bearer token, previously obtained through the opportune authentication endpoint. Each one has it's own query string and body parameters to be included in the HTTP request.
 
-There is a daily limit of 100,000 records (reset at 12 AM UTC) for videos and comments. Meanwhile for the followers/following endpoint, the limit is set up to 2 million records (\url{https://developers.tiktok.com/doc/research-api-faq/}).
+There is a daily limit of 100,000 records (which resets at 12 AM UTC) for videos and comments while, for the followers/following endpoint, the limit is set up to 2 million records (\url{https://developers.tiktok.com/doc/research-api-faq/}).
 
-In this project, every call is parameterized to retrieve the maximum allowed data, typically 100 records. However, the APIs do not always provide the exact data requested: possibly due to a lack of content requested or other unknown issues.
+In this project, every call is parameterized to retrieve the maximum allowed data, typically 100 records. However, the APIs do not always provide the exact data requested, possibly due to a lack of content or other unknown issues.
 
-\paragraph*{Download Component}
+\subsubsection*{Download Component}
 
-To gather data has been realized a wrapper for the API which simply make the WebAPI calls and store the results.
-Almost every public endpoint provided has been totally covered by the script, in specific: followers, videos, comments, following, liked videos, user information.
+A wrapper for fhe APIs has been realized for data gathering, which simply make WebAPI calls and store the results.
+Almost every public endpoint provided has been totally covered by the script, specifically: user's followers, user's videos, video's comments, following users, liked videos and user's information.
 
-The script simply in first step make the authentication to TikTok's endpoint (gaining the token, which will be refreshed by the program a few minutes before the 2 hours lifespan), then start executing the batch of data required; storing each response in a json file (which later will be analyzed).
+In the first step, the script authenticates to TikTok's endpoint, gaining the token, which will be refreshed a few minutes before its 2-hours lifespan. Then it starts retrieving the data batch required, storing each response in a JSON file for later analysis.
 
 The program will start executing the download of videos passing in the body the query composed (explained later), then store the video information and next download the followers of the influencer.
-This for a number of video specified, in this case 100 videos for month for each influencer selected %(\href[code:query]{see the query}).
+This for a number of video specified, in this case 100 videos for month for each influencer selected (\href[lst:query]{see the query}).
 
 \begin{lstlisting}[language=Python]
 # @query {JSON} the video query as specified in the tiktok docs
