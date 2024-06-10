@@ -4,7 +4,7 @@ To help visualize all the gathered data, identify the presence of echo chambers,
 
 \subsection{Data Preparation}
 
-First, a list of super-users' followers was gathered via TikTok's APIs in the form of a JSON file, with the following structure (we can ignore \verb+"videoID"+ and \verb+"videoDate"+):
+First, a list of super-users' followers was gathered via TikTok's APIs in the form of a JSON file, and then processed with a script to get the following structure (we can ignore \verb+"videoID"+ and \verb+"videoDate"+):
 
 \begin{lstlisting}[language=json]
 [
@@ -137,7 +137,7 @@ The following table shows users following more than one super-user from both lis
 
 As we can see, only six users follows more than three super-users and, generally speaking, most users follows super-users of the same political affiliation. Considering the scarcity of data, if a user follows less than 100\% of super-users from the same political spectrum, it is difficult to say anything about their political beliefs.
 
-Let's make some examples: taken into consideration the table shown above (which is a small sample of the original, available a the following link: \url{https://github.com/albertomorini/CNS/blob/main/privacy\_table.html}) we can say the following:
+Let's make some examples: taken into consideration the table shown above (which is a small sample of the original, available a the following link: \url{https://github.com/albertomorini/CNS/blob/main/privacy_table.html}) we can say the following:
 
 \begin{itemize}
     \item User \textit{mdmcgraw1} follows three super-users, all left-leaning, therefore is classified as left-leaning;
