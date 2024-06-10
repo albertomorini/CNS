@@ -349,3 +349,17 @@ Examples:
 > The Fourth of July is traditionally marked by a firework display.
 
 
+**Writing long numbers**
+
+Longer numbers follow specific rules:
+
+    Use a period to indicate a decimal point.
+    Starting with 1,000, use commas to separate every three digits.
+    Starting with a million, use a combination of numerals and words.
+    Examples:
+
+  > The region has an average of 43.75 doctors for every 10,000 people.
+
+  > Some predict that the number of users will reach 2 billion by 2020.
+
+

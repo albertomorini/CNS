@@ -1,5 +1,6 @@
 \section{Data Gathering}
-Considering the context (US elections) it is imperative to have users data divided between left and right leaning, so a group of \textit{super-users} was selected using various sources. 
+
+Considering the context (US elections) it is imperative to have users' data divided between left and right leaning, so a group of \textit{super-users} was selected using various sources. 
 \textit{Super-users} are defined as follows:
 
 \begin{itemize}
@@ -8,7 +9,7 @@ Considering the context (US elections) it is imperative to have users data divid
     \item Newspapers or news sites (i.e. The Washington Post).
 \end{itemize}
 
-The complete followers list, with relative sources (missing if selected arbitrarily by the authors), is the following:
+The complete followers list, with relative sources (missing if selected arbitrarily by the authors), is as follows:
 
 \begin{itemize}
     \item Left-Wing: 
@@ -49,9 +50,70 @@ The complete followers list, with relative sources (missing if selected arbitrar
         \end{itemize}
 \end{itemize}
 
-Only five of each groups had been selected to data gathering, due to time constraints (\textit{@alynicolee1126, @babylonbee, @real.benshapiro, @clarksonlawson, @notvictornieves} for right-leaning, and \textit{@thedailybeast, @huffpost, @aocinthehouse, @repbowman, @newyorker} for left-leaning super-users). All data has been gathered using TikTok's official APIs (\url{https://developers.tiktok.com/doc/overview/})
+Sue to time and computational constraints, only five super-users had been selected from each group: \textit{@alynicolee1126, @babylonbee, @real.benshapiro, @clarksonlawson, @notvictornieves} for right-leaning, and \textit{@thedailybeast, @huffpost, @aocinthehouse, @repbowman, @newyorker} for left-leaning super-users. \\
+All data has been gathered using TikTok's official APIs (\url{https://developers.tiktok.com/doc/overview/})
 
 \subsection{TikTok's APIs}
 
+TikTok's API requires prior authentication using a Secret Key and a Client ID, both of which can be obtained by making a personal request to the platform's staff. 
+Then, each call to the API must be authenticated with a Bearer token, previously obtained through the opportune authentication endpoint. Each one has it's own query string and body parameters to be included in the HTTP request.
 
+There is a daily limit of 100,000 records (which resets at 12 AM UTC) for videos and comments while, for the followers/following endpoint, the limit is set up to 2 million records (\url{https://developers.tiktok.com/doc/research-api-faq/}).
 
+In this project, every call is parameterized to retrieve the maximum allowed data, typically 100 records. However, the APIs do not always provide the exact data requested, possibly due to a lack of content or other unknown issues.
+
+\subsubsection*{Download Component}
+
+A wrapper for fhe APIs has been realized for data gathering, which simply make WebAPI calls and store the results.
+Almost every public endpoint provided has been totally covered by the script, specifically: user's followers, user's videos, video's comments, following users, liked videos and user's information.
+
+In the first step, the script authenticates to TikTok's endpoint, gaining the token, which will be refreshed a few minutes before its 2-hours lifespan. Then it starts retrieving the data batch required, storing each response in a JSON file for later analysis.
+
+The program will start executing the download of videos passing in the body the query composed (explained later), then store the video information and next download the followers of the influencer.
+This for a number of video specified, in this case 100 videos for month for each influencer selected (\href[lst:query]{see the query}).
+
+\begin{lstlisting}[language=Python]
+# @query {JSON} the video query as specified in the tiktok docs
+# @nrVideo {int} the number of video which we want to download
+# @startDate {string} in unix format
+# @endDate {string} in unix format -- NB: can't be greater than a month
+# @filename {string} of json where data will be stored
+def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
+    ....
+
+processVideo(videoQuery,100,200,'20240301','20240330','influencer-month')
+\end{lstlisting}
+
+\paragraph*{Amount of Data Downloaded}
+
+For each video, followers have been downloaded for up to 5 days, within 3-hour intervals.
+
+With this method for every video can be retrieved:
+
+\begin{lstlisting}[language=Python]
+100 users * (24h/3h = 8 request per a single day, for 5 days= 40 request)
+In theory: 4000 followers for each video.
+\end{lstlisting}
+
+However these theoretical number are reached only if the new followers are distinct in every call, which is difficult to achieve within such a short time span.
+
+Since the TikTok's followers API returns the user which has started following the influencer from the date (in unix format) declared in the body of the request (called cursor). There's the problem of duplicated accounts.
+
+To clarify: if JohnDoe follows MrWhite on 31/12/2023 at 10:00:00 and MrWhite does not gain 100 new followers in the next 3 hours, JohnDoe will also be included in the request at 31/12/2023 at 13:00:00.
+
+To solve this problem, a Python script (\textit{DataCleaner.py}) was created, which keeps only the first occurrence (sorted by ascending date) of each username found in the total downloaded data.
+
+\begin{lstlisting}[language=Python]
+for i in range(0,len(total)-1):
+for j in range(i+1, len(total)):
+    if(total[i].get("influencer")==total[j].get("influencer")): ##check if the same influencer (we don't want to remove common followers)
+        total[i]["followerList"] = [elem for elem in total[i].get("followerList") if elem not in total[j].get("followerList")]
+\end{lstlisting}
+
+Additionally, video metadata (such as views, likes, number of comments, etc) has been stored and later analyzed.
+
+Has also been downloaded the public information of the influencer, with a single call for each one.
+
+In the end, the amount of data downloaded is:
+- 35798 distinct followers
+- 182 videos divided of 10 influencers
