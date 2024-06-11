@@ -1,12 +1,12 @@
 \section{Data Gathering}
 
-Considering the context (US elections) it is imperative to have users' data divided between left and right leaning, so a group of \textit{super-users} was selected using various sources. 
+Considering the context (US elections) it is imperative to have users' data divided between left and right-leaning, so a group of \textit{super-users} was selected using various sources. 
 \textit{Super-users} are defined as follows:
 
 \begin{itemize}
     \item Influencers: people whose notoriety is platform-built, without a background in institutions of entertainment;
     \item Politicians;
-    \item Newspapers or news sites (i.e. The Washington Post).
+    \item Newspapers or news sites (i.e., The Washington Post).
 \end{itemize}
 
 The complete followers list, with relative sources (missing if selected arbitrarily by the authors), is as follows:
@@ -50,13 +50,13 @@ The complete followers list, with relative sources (missing if selected arbitrar
         \end{itemize}
 \end{itemize}
 
-Sue to time and computational constraints, only five super-users had been selected from each group: \textit{@alynicolee1126, @babylonbee, @real.benshapiro, @clarksonlawson, @notvictornieves} for right-leaning, and \textit{@thedailybeast, @huffpost, @aocinthehouse, @repbowman, @newyorker} for left-leaning super-users. \\
+Due to time and computational constraints, only five super-users had been selected from each group: \textit{@alynicolee1126, @babylonbee, @real.benshapiro, @clarksonlawson, @notvictornieves} for right-leaning, and \textit{@thedailybeast, @huffpost, @aocinthehouse, @repbowman, @newyorker} for left-leaning super-users. \\
 All data has been gathered using TikTok's official APIs (\url{https://developers.tiktok.com/doc/overview/})
 
 \subsection{TikTok's APIs}
 
-TikTok's API requires prior authentication using a Secret Key and a Client ID, both of which can be obtained by making a personal request to the platform's staff. 
-Then, each call to the API must be authenticated with a Bearer token, previously obtained through the opportune authentication endpoint. Each one has it's own query string and body parameters to be included in the HTTP request.
+TikTok's APIs requires prior authentication using a Secret Key and a Client ID, both of which can be obtained by making a personal request to the platform's staff. 
+Then, each call to the API must be authenticated with a Bearer token, previously obtained through the appropriate authentication endpoint. Each one has its own query string and body parameters to be included in the HTTP request.
 
 There is a daily limit of 100,000 records (which resets at 12 AM UTC) for videos and comments while, for the followers/following endpoint, the limit is set up to 2 million records (\url{https://developers.tiktok.com/doc/research-api-faq/}).
 
@@ -64,20 +64,20 @@ In this project, every call is parameterized to retrieve the maximum allowed dat
 
 \subsubsection*{Download Component}
 
-A wrapper for fhe APIs has been realized for data gathering, which simply make WebAPI calls and store the results.
-Almost every public endpoint provided has been totally covered by the script, specifically: user's followers, user's videos, video's comments, following users, liked videos and user's information.
+A wrapper for the APIs has been realized for data gathering, which simply makes WebAPI calls and stores the results.
+Almost every public endpoint provided has been totally covered by the script, specifically: users' followers, users' videos, videos' comments, following users, liked videos, and users' information.
 
-In the first step, the script authenticates to TikTok's endpoint, gaining the token, which will be refreshed a few minutes before its 2-hours lifespan. Then it starts retrieving the data batch required, storing each response in a JSON file for later analysis.
+In the first step, the script authenticates to TikTok's endpoint, gaining the token, which will be refreshed a few minutes before its 2-hour lifespan. Then it starts retrieving the data batch required, storing each response in a JSON file for later analysis.
 
 For the specified number of videos, in this case 100 per month for each super-user (see second code block of section \ref{lst:query}), the script will download their metadata and store them, before concluding its job by retrieving super-users' followers.
 
 \begin{lstlisting}[language=Python]
-# @query {JSON} the video query as specified in the tiktok docs
-# @nrVideo {int} the number of video which we want to download
-# @startDate {string} in unix format
-# @endDate {string} in unix format -- NB: can't be greater than a month
-# @filename {string} of json where data will be stored
-def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
+# @query {JSON} the video query as specified in the TikTok docs
+# @nrVideo {int} the number of videos which we want to download
+# @startDate {string} in Unix format
+# @endDate {string} in Unix format -- NB: can't be greater than a month
+# @filename {string} of JSON where data will be stored
+def processVideo(query, nrVideo, nrComments, startDate, endDate, filename):
     ....
 
 processVideo(videoQuery,100,200,'20240301','20240330','influencer-month')
@@ -85,13 +85,13 @@ processVideo(videoQuery,100,200,'20240301','20240330','influencer-month')
 
 \subsubsection*{Amount of Data Downloaded}
 
-For each video, followers have been downloaded (100 per request) for up to 5 days, within 3-hour intervals, allowing to retrieve a theoretical number of followers equal to 4,000:
+For each video, followers have been downloaded (100 per request) for up to 5 days, within 3-hour intervals, allowing for the retrieval of a theoretical number of followers equal to 4,000:
 
-$(100 users * ((24h/3h)*5 = 40 requests )) = 4000$
+\[ (100 \text{ users} \times ((24 \text{h}/3 \text{h}) \times 5 = 40 \text{ requests})) = 4000 \]
 
-However such numbers are reached only if all new followers are distinct in every call, which is difficult to achieve within such a short time span.
+However, such numbers are reached only if all new followers are distinct in every call, which is difficult to achieve within such a short time span.
 
-Since TikTok's APIs returns the user which has started following the influencer from the date (in unix format) declared in the body of the request (called cursor), the problem of duplicated accounts arises.
+Since TikTok's APIs return the user who has started following the influencer from the date (in Unix format) declared in the body of the request (called cursor), the problem of duplicated accounts arises.
 
 To clarify: if \textit{JohnDoe} follows \textit{MrWhite} on 31/12/2023 at 10:00:00 and \textit{MrWhite} does not gain 100 new followers in the next 3 hours, \textit{JohnDoe} will also be included in the request at 31/12/2023 at 13:00:00.
 
@@ -106,7 +106,7 @@ for j in range(i+1, len(total)):
 
 Additionally, video metadata (such as views, likes, number of comments, etc) and super-users' public information (with a single call for each one) are stored for a later analysis. 
 
-Ultimately, the total amount of data downloaded, divided on 10 super-users, is as follows:
+Ultimately, the total amount of data downloaded, divided among 10 super-users, is as follows:
 \begin{itemize}
     \item 35,798 distinct followers;
     \item 182 videos.
