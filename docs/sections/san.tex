@@ -25,7 +25,7 @@ First, a list of super-users' followers was gathered via TikTok's APIs in the fo
 ]
 \end{lstlisting}
 
-To clarify, here follows a partition of the real JSON data used:
+To clarify, here follows a portion of the real JSON data used:
 
 \begin{lstlisting}[language=json]
     {
@@ -78,7 +78,7 @@ Now we have three data structures to work with: two vectors with all super-users
 
 \subsection{Social Graph}
 
-Broadly speaking, a social graph is a graph that represents social relations between entities, were vertices (or nodes) represents users and edges represents relations between such users. It is a model of representation of a social network, and has been referred to as "the global mapping of everybody and how they're related".
+Broadly speaking, a social graph is a graph that represents social relations between entities, where vertices (or nodes) represents users and edges represents relations between such users. It is a model of representation of a social network, and has been referred to as "the global mapping of everybody and how they're related".
 
 To give a brief example: if Alice and Bob are friends on a social network, in a social graph they would be represented each as a node, and there would be an edge between them.
 
@@ -88,7 +88,7 @@ The term was popularized at the Facebook F8 conference on May 24, 2007, when it 
 \includegraphics[width = .5\textwidth]{images/alice_bob_san.png}
 
 Employing a social graph has numerous advantages: it helps visualize all gathered data (all users and their relations), identify the presence of echo chambers and provide insights to analyze the network as a whole. \\
-The graph that follows clearly demonstrate that, considering the gathered data, users do not interact with each other outside their communities, thus forming cliques that can be interpreted as echo chambers:
+The graph that follows clearly demonstrate that: considering the gathered data, users do not interact with each other outside their communities, thus forming cliques that can be interpreted as echo chambers.
 
 \aCapo{}
 \includegraphics[width = .5\textwidth]{images/final_combined_san_graph.png}
@@ -98,9 +98,9 @@ Unfortunately the above graph could be difficult to understand due to the except
 \aCapo{}
 \includegraphics[width = .5\textwidth]{images/mockUP_san.png}
 
-Super-users can be easily identified: their nodes are larger, labeled and, most notably, they are at the center of their respective sub-graphs. 
+Super-users can be easily identified: their nodes are larger, labeled and, most notably, they have the highest degree among all nodes in their respective sub-graphs. 
 
-All black vertices represents followers of the super-users, unlabeled for improved readability, and the edge color represent the political orientation of the super-user they are connected to(red for \textcolor{red}{right-leaning} and blue for \textcolor{blue}{left-leaning} super-users). 
+All black vertices represents followers of the super-users, unlabeled for improved readability, and the edge color represent the political orientation of the super-user they are connected to (red for \textcolor{red}{right-leaning} and blue for \textcolor{blue}{left-leaning} super-users). 
 
 To clarify: if \textit{@user-Alice} follows super-user \textit{@aocinthehouse} (official account of Congress member Alexandria Ocasio-Cortez), which is classified as a left-leaning super-user, the edge connecting them will be blue. 
 
@@ -131,7 +131,7 @@ Salton index values range between 0 and 1, with the diagonal of the matrix showi
 \subsection{Privacy Inference}
 Another way to leverage social network information, specifically the network structure (edges and their respective nodes), is to infer users' attributes. This falls under classification problems (identifying which of a set of categories an observation belongs to, such as classifying an email as "spam" or "not spam") \cite{wikiClassification}, and such techniques have been employed in this context (e.g., k-nearest neighbors classification \cite{wikiKNN}).
 
-The objective here is to infer the political orientation of users based on the super-users they follow. Given the scarcity of super-users, the presence of only two sets (left and right-leaning), and the high degree of isolation between communities, complex statistical tools are deemed unnecessary. The idea is straightforward: if \textit{user-Alice} follows mainly left-leaning super-users (e.g., \textit{aocinthehouse}, \textit{bernie}, \textit{repbowman}), that user is classified as left-leaning. Conversely, if \textit{user-Bob} follows mainly right-leaning super-users, he is classified as right-leaning.
+The objective here is to infer the political orientation of users based on the super-users they follow. Given the scarcity of super-users, the presence of only two sets (left and right-leaning), and the high degree of isolation between communities, complex statistical tools are deemed unnecessary. The idea is straightforward: if \textit{user-Alice} follows mainly left-leaning super-users (e.g., \textit{aocinthehouse}, \textit{bernie}, \textit{repbowman}), that user is classified as left-leaning. Conversely, if \textit{user-Bob} follows mainly right-leaning super-users, it is classified as right-leaning.
 
 The following table shows users following more than one super-user from both lists of left and right-leaning super-users, with results ordered by the number of super-users followed.
 
@@ -140,7 +140,7 @@ The following table shows users following more than one super-user from both lis
 
 As we can see, only six users follows more than three super-users and, generally speaking, most users follows super-users of the same political affiliation. Considering the scarcity of data, if a user follows less than 100\% of super-users from the same political spectrum, it is difficult to say anything about their political beliefs.
 
-Let's make some examples: taken into consideration the table shown above (which is a small sample of the original, available a the following link: \url{https://github.com/albertomorini/CNS/blob/main/privacy_table.html}) we can say the following:
+Let's make some examples: taken into consideration the table shown above (which is a small sample of the original, hidden for privacy reasons) we can say the following:
 
 \begin{itemize}
     \item User \textit{mdmcgraw1} follows three super-users, all left-leaning, therefore is classified as left-leaning;
