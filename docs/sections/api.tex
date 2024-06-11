@@ -69,8 +69,7 @@ Almost every public endpoint provided has been totally covered by the script, sp
 
 In the first step, the script authenticates to TikTok's endpoint, gaining the token, which will be refreshed a few minutes before its 2-hours lifespan. Then it starts retrieving the data batch required, storing each response in a JSON file for later analysis.
 
-The program will start executing the download of videos passing in the body the query composed (explained later), then store the video information and next download the followers of the influencer.
-This for a number of video specified, in this case 100 videos for month for each influencer selected (\href[lst:query]{see the query}).
+For the specified number of videos, in this case 100 per month for each super-user (see second code block of section \ref{lst:query}), the script will download their metadata and store them, before concluding its job by retrieving super-users' followers.
 
 \begin{lstlisting}[language=Python]
 # @query {JSON} the video query as specified in the tiktok docs
@@ -84,22 +83,17 @@ def processVideo(query, nrVideo, nrComments, startDate,endDate,filename):
 processVideo(videoQuery,100,200,'20240301','20240330','influencer-month')
 \end{lstlisting}
 
-\paragraph*{Amount of Data Downloaded}
+\subsubsection*{Amount of Data Downloaded}
 
-For each video, followers have been downloaded for up to 5 days, within 3-hour intervals.
+For each video, followers have been downloaded (100 per request) for up to 5 days, within 3-hour intervals, allowing to retrieve a theoretical number of followers equal to 4,000:
 
-With this method for every video can be retrieved:
+$(100 users * ((24h/3h)*5 = 40 requests )) = 4000$
 
-\begin{lstlisting}[language=Python]
-100 users * (24h/3h = 8 request per a single day, for 5 days= 40 request)
-In theory: 4000 followers for each video.
-\end{lstlisting}
+However such numbers are reached only if all new followers are distinct in every call, which is difficult to achieve within such a short time span.
 
-However these theoretical number are reached only if the new followers are distinct in every call, which is difficult to achieve within such a short time span.
+Since TikTok's APIs returns the user which has started following the influencer from the date (in unix format) declared in the body of the request (called cursor), the problem of duplicated accounts arises.
 
-Since the TikTok's followers API returns the user which has started following the influencer from the date (in unix format) declared in the body of the request (called cursor). There's the problem of duplicated accounts.
-
-To clarify: if JohnDoe follows MrWhite on 31/12/2023 at 10:00:00 and MrWhite does not gain 100 new followers in the next 3 hours, JohnDoe will also be included in the request at 31/12/2023 at 13:00:00.
+To clarify: if \textit{JohnDoe} follows \textit{MrWhite} on 31/12/2023 at 10:00:00 and \textit{MrWhite} does not gain 100 new followers in the next 3 hours, \textit{JohnDoe} will also be included in the request at 31/12/2023 at 13:00:00.
 
 To solve this problem, a Python script (\textit{DataCleaner.py}) was created, which keeps only the first occurrence (sorted by ascending date) of each username found in the total downloaded data.
 
@@ -110,10 +104,10 @@ for j in range(i+1, len(total)):
         total[i]["followerList"] = [elem for elem in total[i].get("followerList") if elem not in total[j].get("followerList")]
 \end{lstlisting}
 
-Additionally, video metadata (such as views, likes, number of comments, etc) has been stored and later analyzed.
+Additionally, video metadata (such as views, likes, number of comments, etc) and super-users' public information (with a single call for each one) are stored for a later analysis. 
 
-Has also been downloaded the public information of the influencer, with a single call for each one.
-
-In the end, the amount of data downloaded is:
-- 35798 distinct followers
-- 182 videos divided of 10 influencers
+Ultimately, the total amount of data downloaded, divided on 10 super-users, is as follows:
+\begin{itemize}
+    \item 35,798 distinct followers;
+    \item 182 videos.
+\end{itemize}
