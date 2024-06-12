@@ -67,7 +67,7 @@ In this project, every call is parameterized to retrieve the maximum allowed dat
 A wrapper for the APIs has been realized for data gathering, which simply makes WebAPI calls and stores the results.
 Almost every public endpoint provided has been totally covered by the script, specifically: users' followers, users' videos, videos' comments, following users, liked videos, and users' information.
 
-In the first step, the script authenticates to TikTok's endpoint, gaining the token, which will be refreshed a few minutes before its 2-hour lifespan. Then it starts retrieving the data batch required, storing each response in a JSON file for later analysis.
+In the first step, the script authenticates to TikTok's endpoint, gaining the token, which will be refreshed a few minutes before its 2-hour lifespan. Then it starts retrieving the data batch requested, storing each response in a JSON file for later analysis.
 
 For the specified number of videos, in this case 100 per month for each super-user (see second code block of section \ref{lst:query}), the script will download their metadata and store them, before concluding its job by retrieving super-users' followers.
 
@@ -89,7 +89,8 @@ For each video, followers have been downloaded (100 per request) for up to 5 day
 
 \[ (100 \text{ users} \times ((24 \text{h}/3 \text{h}) \times 5 = 40 \text{ requests})) = 4000 \]
 
-However, such numbers are reached only if all new followers are distinct in every call, which is difficult to achieve within said time span.
+However, such numbers are reached only if all new followers are distinct in every call, which is difficult to achieve
+within such a short time span given.
 
 Since TikTok's APIs return the user who has started following the influencer from the date (in Unix format) declared in the body of the request (called cursor), the problem of duplicated accounts arises.
 
