@@ -1,6 +1,6 @@
-# Advanced Topics in Computer and Networks Security
+# TikTok’s Users Analysis in the Context of US Politics
 
-> Repository for CNS course at @UniPD
+> Repository for Advanced Topics in Computer and Networks Security course at University of Padua (master degree in computer science)
 
 
 In this repository there's just the code divided in two group: data gathering and data analysis.
